@@ -4,7 +4,7 @@ using Prowl.PaperUI;
 // SHADCN discord theme colors
 // discovered through https://ui.jln.dev/
 // @layer base {
-//     
+//
 //     .dark {
 //       --background: 217.5 9.09% 17.25%; /* 40, 43, 48 */
 //       --foreground: 334 34% 98%; /* 255, 247, 252 */
@@ -89,13 +89,13 @@ namespace Shared
                 //Dark
                 backgroundColor = Color.FromArgb(255, 40, 43, 48);
                 cardBackground = Color.FromArgb(255, 30, 32, 36);
-                primaryColor = Color.FromArgb(255, 69, 135, 235);
+                primaryColor = Color.FromArgb(255, 76, 180, 146);
                 secondaryColor = Color.FromArgb(255, 66, 68, 72);
                 textColor = Color.FromArgb(255, 226, 232, 240);
                 lightTextColor = Color.FromArgb(255, 148, 163, 184);
                 colorPalette = [
                     Color.FromArgb(255, 94, 234, 212),   // Cyan
-                    Color.FromArgb(255, 162, 155, 254),  // Purple  
+                    Color.FromArgb(255, 162, 155, 254),  // Purple
                     Color.FromArgb(255, 249, 115, 22),   // Orange
                     Color.FromArgb(255, 248, 113, 113),  // Red
                     Color.FromArgb(255, 250, 204, 21)    // Yellow
@@ -112,7 +112,7 @@ namespace Shared
                 lightTextColor = Color.FromArgb(255, 107, 114, 128);
                 colorPalette = [
                     Color.FromArgb(255, 59, 130, 246),   // Blue
-                    Color.FromArgb(255, 16, 185, 129),   // Teal  
+                    Color.FromArgb(255, 16, 185, 129),   // Teal
                     Color.FromArgb(255, 239, 68, 68),    // Red
                     Color.FromArgb(255, 245, 158, 11),   // Amber
                     Color.FromArgb(255, 139, 92, 246)    // Purple

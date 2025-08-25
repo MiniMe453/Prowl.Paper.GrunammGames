@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Paper\Paper.csproj" />
+    <ProjectReference Include="..\TextureTKProject\TextureTKProject.csproj" />
   </ItemGroup>
 
 </Project>
