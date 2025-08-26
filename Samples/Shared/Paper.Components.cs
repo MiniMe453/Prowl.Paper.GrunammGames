@@ -3,6 +3,8 @@
 
 using System.Drawing;
 
+using Prowl.PaperUI.Events;
+using Prowl.PaperUI.LayoutEngine;
 using Prowl.Vector;
 
 using Shared;
@@ -19,29 +21,79 @@ public partial class PaperComponents
         return _gui;
     }
 
-    public bool _showDropdownList = false;
-    public Vector2 _screenPositionDropdown;
+    private bool _showDropdownList = false;
+    public bool ShowDropdownList
+    {
+        get { return _showDropdownList; }
+        set
+        {
+            _showDropdownList = value;
+            Console.WriteLine(_showDropdownList ? "Show Dropdown List" : "Hide Dropdown List");
+        }
+    }
+
+    public void CloseDropdown(ElementEvent eventData)
+    {
+        if (!ShowDropdownList) return;
+        ShowDropdownList = false;
+    }
+
+    public void ShowDropdown(ElementEvent eventData)
+    {
+        ShowDropdownList = !ShowDropdownList;
+    }
+
+    private void CalculateDropdownWidth(Element element, Rect rect)
+    {
+        _dropdownWidth = Math.Abs(rect.BottomLeft.x - rect.BottomRight.x);
+    }
+
     public double _dropdownWidth;
     public ElementBuilder Dropdown(string id, string[] values, int index, Action<int> onNewSelection)
     {
         if (_gui == null) throw new NullReferenceException();
 
-        void DrawDropdown(Vector2 screenPosition, double width)
+        var parent = _gui.Box(values[index])
+            .Width(_gui.Stretch())
+            .OnClick(ShowDropdown)
+            .Height(40)
+            .BackgroundColor(ShowDropdownList ? Themes.backgroundColor: Color.Black)
+            .BorderWidth(ShowDropdownList ? 2 : 0)
+            .BorderColor(Themes.primaryColor)
+            .OnLeave(CloseDropdown)
+            .OnPostLayout(CalculateDropdownWidth)
+            .RoundedTop(5);
+
+        var cleanup = parent.Enter();
+        using (_gui.Row("Preview information")
+                   .Margin(5, 0)
+                   .Enter())
         {
+            using (_gui.Box("PreviewBox")
+                       .Text(Text.MiddleLeft(values[index], Fonts.fontMedium, ShowDropdownList? Themes.textColor : Themes.lightTextColor))
+                       .Left(_gui.Pixels(5))
+                       .Enter())
+            { }
+
+            using(_gui.Box("MenuItemIcon")
+                      .Text(Text.MiddleRight(Icons.ArrowDown, Fonts.fontSmall, ShowDropdownList? Themes.textColor : Themes.lightTextColor))
+                      .Enter()) {}
+
+        }
+
+        if(ShowDropdownList)
             using (_gui.Box("Dropdown")
                        .PositionType(PositionType.SelfDirected)
-                       .Position(screenPosition.x, screenPosition.y + 5)
-                       .Width(width)
-                       // .BackgroundColor(Color.Aqua)
+                       .Top(_gui.Percent(100, 1))
+                       .Width(_dropdownWidth)
                        .Height(values.Length * 35)
                        // .BorderWidth(2)
                        // .BorderColor(Themes.primaryColor)
+                       .Layer(Layer.Overlay)
                        .Rounded(5)
                        .BoxShadow(0,6,16,-5,Color.FromArgb(128, Color.Black))
                        .Enter())
             {
-
-                _gui.MoveToRoot();
                 for (int i = 0; i < values.Length; i++)
                 {
                     //We need to store this in a temp variable, otherwise the action that we invoke
@@ -58,7 +110,6 @@ public partial class PaperComponents
                         .OnClick(e =>
                         {
                             onNewSelection.Invoke(idx);
-                            _showDropdownList = false;
                         })
                         .BackgroundColor(tabColor)
                         // .BorderWidth(1)
@@ -67,72 +118,8 @@ public partial class PaperComponents
                             i == values.Length - 1 ? 5 : 0);
                 }
             }
-        }
 
-        if (!_showDropdownList)
-        {
-            var parent = _gui.Box(id)
-                .BackgroundColor(Color.Black)
-                .Height(40)
-                .OnClick(e => _showDropdownList = !_showDropdownList)
-                .OnLeave(e => _showDropdownList = false);
-            var cleanup = parent.Enter();
-
-            using (_gui.Row("Preview information")
-                       .Margin(5, 0)
-                       // .Width(_gui.Percent(100))
-                       .Enter())
-            {
-                using (_gui.Box("PreviewBox")
-                           .Text(Text.MiddleLeft(values[index], Fonts.fontMedium, Themes.lightTextColor))
-                           .Left(_gui.Pixels(5))
-                           .Enter())
-                { }
-
-                using(_gui.Box($"MenuItemIcon")
-                         .Text(Text.MiddleRight(Icons.ArrowDown, Fonts.fontSmall, Themes.lightTextColor))
-                         .Enter()) {}
-
-            }
-
-            cleanup.Dispose();
-            return parent;
-        }
-        else
-        {
-            var parent = _gui.Box(values[index])
-                .Width(_gui.Stretch())
-                .OnClick(e => _showDropdownList = !_showDropdownList)
-                .Height(40)
-                .BackgroundColor(Themes.backgroundColor)
-                .BorderWidth(2)
-                .BorderColor(Themes.primaryColor)
-                .OnPostLayout((e, rect) =>
-                {
-                    _screenPositionDropdown = rect.BottomLeft;
-                    _dropdownWidth = Math.Abs(rect.BottomLeft.x - rect.BottomRight.x);
-                })
-                .RoundedTop(5);
-
-            var cleanup = parent.Enter();
-            using (_gui.Row("Preview information")
-                       .Margin(5, 0)
-                       .Enter())
-            {
-                using (_gui.Box("PreviewBox")
-                           .Text(Text.MiddleLeft(values[index], Fonts.fontMedium, Themes.textColor))
-                           .Left(_gui.Pixels(5))
-                           .Enter())
-                { }
-
-                using(_gui.Box("MenuItemIcon")
-                          .Text(Text.MiddleRight(Icons.ArrowDown, Fonts.fontSmall, Themes.textColor))
-                          .Enter()) {}
-
-            }
-            cleanup.Dispose();
-            DrawDropdown(_screenPositionDropdown, _dropdownWidth);
-            return parent;
-        }
+        cleanup.Dispose();
+        return parent;
     }
 }
