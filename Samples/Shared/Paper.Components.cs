@@ -81,43 +81,55 @@ public partial class PaperComponents
 
         }
 
-        if(ShowDropdownList)
-            using (_gui.Box("Dropdown")
-                       .PositionType(PositionType.SelfDirected)
-                       .Top(_gui.Percent(100, 1))
-                       .Width(_dropdownWidth)
-                       .Height(values.Length * 35)
-                       // .BorderWidth(2)
-                       // .BorderColor(Themes.primaryColor)
-                       .Layer(Layer.Overlay)
-                       .Rounded(5)
-                       .BoxShadow(0,6,16,-5,Color.FromArgb(128, Color.Black))
-                       .Enter())
-            {
-                for (int i = 0; i < values.Length; i++)
-                {
-                    //We need to store this in a temp variable, otherwise the action that we invoke
-                    //doesn't get correctly invoked by the code.
-                    int idx = i;
-                    bool isSelected = i == index;
-                    Color tabColor = isSelected ? Themes.primaryColor : Themes.backgroundColor;
+        if (!ShowDropdownList)
+        {
+            cleanup.Dispose();
+            return parent;
+        }
 
-                    _gui.Box($"Tab_{i}")
-                        .Width(_gui.Stretch())
-                        .Height(_gui.Stretch())
-                        .Text(Text.MiddleCenter(values[i], Fonts.fontMedium,
-                            isSelected ? Themes.textColor : Themes.lightTextColor))
-                        .OnClick(e =>
-                        {
-                            onNewSelection.Invoke(idx);
-                        })
-                        .BackgroundColor(tabColor)
-                        // .BorderWidth(1)
-                        // .BorderColor(Color.FromArgb(50, Color.White))
-                        .Rounded(i == 0 ? 5 : 0, i == 0 ? 5 : 0, i == values.Length - 1 ? 5 : 0,
-                            i == values.Length - 1 ? 5 : 0);
-                }
+        //We need to do this prepass so we can figure out what the width of the dropdown elements should be.
+        double dropdownWidth = 0;
+        for (int i = 0; i < values.Length; ++i)
+        {
+            dropdownWidth = Math.Max(dropdownWidth, Fonts.fontMedium.MeasureString(values[i]).X + 50);
+        }
+
+        using (_gui.Box("Dropdown")
+                   .PositionType(PositionType.SelfDirected)
+                   .Top(_gui.Percent(100, 1))
+                   .Width(dropdownWidth)
+                   .Height(values.Length * 35)
+                   // .BorderWidth(2)
+                   // .BorderColor(Themes.primaryColor)
+                   .Layer(Layer.Overlay)
+                   .Rounded(5)
+                   .BoxShadow(0,6,16,-5,Color.FromArgb(128, Color.Black))
+                   .Enter())
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                //We need to store this in a temp variable, otherwise the action that we invoke
+                //doesn't get correctly invoked by the code.
+                int idx = i;
+                bool isSelected = i == index;
+                Color tabColor = isSelected ? Themes.primaryColor : Themes.backgroundColor;
+
+                _gui.Box($"Tab_{i}")
+                    .Width(dropdownWidth)
+                    .Height(_gui.Stretch())
+                    .Text(Text.MiddleCenter(values[i], Fonts.fontMedium,
+                        isSelected ? Themes.textColor : Themes.lightTextColor))
+                    .OnClick(e =>
+                    {
+                        onNewSelection.Invoke(idx);
+                    })
+                    .BackgroundColor(tabColor)
+                    // .BorderWidth(1)
+                    // .BorderColor(Color.FromArgb(50, Color.White))
+                    .Rounded(i == 0 ? 5 : 0, i == 0 ? 5 : 0, i == values.Length - 1 ? 5 : 0,
+                        i == values.Length - 1 ? 5 : 0);
             }
+        }
 
         cleanup.Dispose();
         return parent;

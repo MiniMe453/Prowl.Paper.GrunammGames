@@ -1149,9 +1149,9 @@ namespace Shared
                            .SetScroll(Scroll.ScrollY)
                            .Enter())
                 {
-                    string[] values = { "Option 1", "Option 2", "Option 3", "Option 4", "Option 5", "Option 6" };
+                    string[] values = { "Option 1", "Option 2 longer here", "Option 3", "Option 4", "Option 5", "Option 6" };
                     Components.Dropdown("hello workd", values, _selectedIdx, x => _selectedIdx = x)
-                        .Width(500)
+                        .Width(150)
                         .Rounded(5)
                         .Margin(10);
 
