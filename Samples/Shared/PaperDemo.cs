@@ -45,6 +45,20 @@ namespace Shared
             Components.InitializeComponentLibrary(Gui);
 
             testImage = TextureTK.LoadFromFile("C:/Users/Potato Flakes/Pictures/CyberpunkFinal/photomode_26032025_182108.png");
+
+            ColumnInfo info = new() { Name = "Column 01", Width = 100 };
+            _columns.Add(info);
+            info = new() { Name = "Column 02", Width = 250 };
+            _columns.Add(info);
+            info = new() { Name = "Column 03", Width = 50 };
+            _columns.Add(info);
+            info = new() { Name = "Column 04", Width = 300 };
+            _columns.Add(info);
+            info = new() { Name = "Column 05", Width = 750 };
+            _columns.Add(info);
+            info = new() { Name = "Column 06", Width = 250 };
+            _columns.Add(info);
+
         }
 
         public static void RenderUI()
@@ -1136,6 +1150,8 @@ namespace Shared
         private static double _exWidthVal = 100;
         private static double _maxWidth = 250;
         private static int _selectedIdx = 0;
+
+        private static List<ColumnInfo> _columns = new();
         private static void RenderStylingExampleTab()
         {
             using (Gui.Row("StylingExample")
@@ -1149,49 +1165,54 @@ namespace Shared
                            .SetScroll(Scroll.ScrollY)
                            .Enter())
                 {
-                    string[] values = { "Option 1", "Option 2 longer here", "Option 3", "Option 4", "Option 5", "Option 6" };
-                    Components.Dropdown("hello workd", values, _selectedIdx, x => _selectedIdx = x)
-                        .Width(150)
-                        .Rounded(5)
-                        .Margin(10);
 
-                    Gui.Box("Layout box test")
-                        .BackgroundColor(Themes.backgroundColor)
-                        .Rounded(5)
-                        .Width(500)
-                        .Height(100)
-                        .Margin(10);
 
-                    using (Gui.Box("BorderBoxParent")
-                               .Width(250)
-                               .Height(100)
-                               .BorderWidth(2)
-                               .BorderColor(Color.FromArgb(50, Color.White))
-                               .Rounded(5)
-                               .Margin(10)
-                               .Enter())
-                    {
-                            Gui.Box($"TextBorder Box")
-                                .Width(Gui.Stretch())
-                                .Height(Gui.Stretch())
-                                .Text(Text.MiddleCenter("Test Box", Fonts.fontMedium, Themes.lightTextColor))
-                                .BackgroundColor(Themes.backgroundColor)
-                                .Rounded(5);
-                    }
-
-                    using (Gui.Box("Picture")
-                               .Height(testImage.Height/4)
-                               .Width(testImage.Width/4)
-                               .Margin(10)
-                               .Rounded(5)
-                               .ScaleY(-1)
-                               .Enter())
-                    {
-                        Gui.AddActionElement((canvas, rect) =>
-                        {
-                            canvas.Image(testImage, rect.x, rect.y, rect.width, rect.height, Color.White);
-                        });
-                    }
+                    Components.Table("TableTest", ref _columns, () => {})
+                        .Height(1000)
+                        .BorderWidth(1)
+                        .BorderColor(Color.White)
+                        .BackgroundColor(Color.Aqua);
+                    // string[] values = { "Option 1", "Option 2 longer here", "Option 3", "Option 4", "Option 5", "Option 6" };
+                    // Components.Dropdown("hello workd", values, _selectedIdx, x => _selectedIdx = x)
+                    //     .Width(150)
+                    //     .Rounded(5)
+                    //     .Margin(10);
+                    //
+                    // Gui.Box("Layout box test")
+                    //     .Width(500)
+                    //     .Height(100)
+                    //     .Margin(10);
+                    //
+                    // using (Gui.Box("BorderBoxParent")
+                    //            .Width(250)
+                    //            .Height(100)
+                    //            .BorderWidth(2)
+                    //            .BorderColor(Color.FromArgb(50, Color.White))
+                    //            .Rounded(5)
+                    //            .Margin(10)
+                    //            .Enter())
+                    // {
+                    //         Gui.Box($"TextBorder Box")
+                    //             .Width(Gui.Stretch())
+                    //             .Height(Gui.Stretch())
+                    //             .Text(Text.MiddleCenter("Test Box", Fonts.fontMedium, Themes.lightTextColor))
+                    //             .BackgroundColor(Themes.backgroundColor)
+                    //             .Rounded(5);
+                    // }
+                    //
+                    // using (Gui.Box("Picture")
+                    //            .Height(testImage.Height/4)
+                    //            .Width(testImage.Width/4)
+                    //            .Margin(10)
+                    //            .Rounded(5)
+                    //            .ScaleY(-1)
+                    //            .Enter())
+                    // {
+                    //     Gui.AddActionElement((canvas, rect) =>
+                    //     {
+                    //         canvas.Image(testImage, rect.x, rect.y, rect.width, rect.height, Color.White);
+                    //     });
+                    // }
                 }
             }
         }

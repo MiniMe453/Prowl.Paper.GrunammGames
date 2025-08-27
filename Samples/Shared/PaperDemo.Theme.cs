@@ -324,6 +324,9 @@ namespace Shared
 
             PaperDemo.Gui.RegisterStyle("skill-bar-fg", new StyleTemplate()
                 .Rounded(7.5));
+
+            PaperDemo.Gui.RegisterStyle("full-rounded", new StyleTemplate().Rounded(100));
+            PaperDemo.Gui.RegisterStyle("border", new StyleTemplate().BorderColor(Color.White).BorderWidth(2));
         }
 
     }
