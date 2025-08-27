@@ -1168,7 +1168,7 @@ namespace Shared
 
 
                     Components.Table("TableTest", ref _columns, () => {})
-                        .Height(1000)
+                        // .Height(1000)
                         .BorderWidth(1)
                         .BorderColor(Color.White)
                         .BackgroundColor(Color.Aqua);
