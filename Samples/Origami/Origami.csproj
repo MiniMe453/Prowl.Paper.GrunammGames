@@ -10,4 +10,8 @@
       <Folder Include="Attributes\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Paper\Paper.csproj" />
+    </ItemGroup>
+
 </Project>

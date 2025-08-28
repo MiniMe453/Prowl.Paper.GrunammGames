@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Paper\Paper.csproj" />
+    <ProjectReference Include="..\Origami\Origami.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,10 @@
 ﻿using System.Collections.Concurrent;
+using System.Drawing;
 
 using Origami.Components;
+using Origami.Utils;
+
+using Prowl.PaperUI;
 
 namespace Origami;
 
@@ -11,6 +15,16 @@ public interface IComponent
 
 public abstract class Component<T> : IComponent where T : Component<T>
 {
+    public ElementBuilder _elementBuilder;
+    public T Create()
+    {
+        _elementBuilder = Origami.Gui.Box(PaperId.Next()).BackgroundColor(Color.Black);
+        return OnCreated();
+    }
+
+    public abstract void Finish();
+
+    protected abstract T OnCreated();
     public abstract T Draw();
     public abstract void Reset();
 }
@@ -18,17 +32,20 @@ public abstract class Component<T> : IComponent where T : Component<T>
 public static class Origami
 {
     private static bool isInitialized = false;
+    public static Paper Gui { get; set; }
     private static ConcurrentDictionary<Type, ConcurrentQueue<IComponent>> ComponentPool { get; set; }
     private static ConcurrentDictionary<Type, int> PoolSizeLimits { get; set; }
     private static ConcurrentDictionary<Type, Func<IComponent>> Constructors { get; set; }
 
-    public static void Init()
+    public static void Init(Paper paper)
     {
         if (isInitialized) throw new InvalidOperationException("Origami has already been initialized. You cannot do this twice");
         isInitialized = true;
         ComponentPool = new ConcurrentDictionary<Type, ConcurrentQueue<IComponent>>();
         Constructors = new ConcurrentDictionary<Type, Func<IComponent>>();
         PoolSizeLimits = new ConcurrentDictionary<Type, int>();
+
+        Gui = paper;
 
         RegisterComponent<Button>();
         RegisterComponent<AccordianItem>();
@@ -51,9 +68,9 @@ public static class Origami
             throw new InvalidOperationException($"Component {typeof(T)} is not registered. Call Origami.RegisterComponent<{typeof(T)}>() first.");
 
         if (queue.TryDequeue(out var component))
-            return (T)component;
+            return ((T)component).Create();
 
-        return (T)Constructors[typeof(T)]();
+        return ((T)Constructors[typeof(T)]()).Create();
     }
 
     public static void SetPoolSizeLimit<T>(int size) where T : Component<T>
@@ -63,6 +80,13 @@ public static class Origami
             throw new InvalidOperationException($"Component {typeof(T)} is not registered. Call Origami.RegisterComponent<{typeof(T)}>() first.");
 
         PoolSizeLimits[typeof(T)] = size;
+    }
+
+    public static int GetPoolSize<T>() where T : Component<T>
+    {
+        if (!ComponentPool.TryGetValue(typeof(T), out var queue))
+            throw new InvalidOperationException($"Component {typeof(T)} is not registered.");
+        return queue.Count;
     }
 
     public static void ReturnToPool<T>(T component)  where T : Component<T>

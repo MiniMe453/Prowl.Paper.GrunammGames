@@ -5,6 +5,10 @@ namespace Origami.Components;
 
 public class AccordianItem : Component<AccordianItem>
 {
+    public override void Finish() => Origami.ReturnToPool(this);
+
+    protected override AccordianItem OnCreated() => throw new NotImplementedException();
+
     public override AccordianItem Draw() => throw new NotImplementedException();
 
     public override void Reset() => throw new NotImplementedException();

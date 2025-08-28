@@ -1,5 +1,8 @@
 ﻿using System.Drawing;
 
+using Origami.Styling;
+using Origami.Utils;
+
 using Prowl.PaperUI;
 using Prowl.Vector;
 
@@ -18,7 +21,7 @@ namespace Shared
 
         // Sample data for visualization
         static double[] dataPoints = { 0.2f, 0.5f, 0.3f, 0.8f, 0.4f, 0.7f, 0.6f };
-        static readonly string[] tabNames = { "Dashboard", "Analytics", "Profile", "Settings" }; //, "Windows" };
+        static readonly string[] tabNames = { "Dashboard", "Analytics", "Profile", "Settings" , "Styles"}; //, "Windows" };
 
         static double time = 0;
 
@@ -32,6 +35,7 @@ namespace Shared
             Gui = paper;
             Fonts.Initialize(Gui);
             Themes.Initialize();
+            Origami.Origami.Init(Gui);
         }
 
         public static void RenderUI()
@@ -70,6 +74,8 @@ namespace Shared
                     Gui.PopID();
                 }
             }
+
+            PaperId.Reset();
         }
 
         //public static bool isWindowAOpen = true;
@@ -276,7 +282,7 @@ namespace Shared
                     case 1: RenderAnalyticsTab(); break;
                     case 2: RenderProfileTab(); break;
                     case 3: RenderSettingsTab(); break;
-                    //case 4: RenderWindowsTab(); break;
+                    case 4: RenderStylingTab(); break;
                     default: RenderDashboardTab(); break;
                 }
             }
@@ -1109,6 +1115,46 @@ namespace Shared
         //    isWindowAOpen = true;
         //    isWindowBOpen = true;
         //}
+
+        private static int maxPoolSize;
+        private static void RenderStylingTab()
+        {
+            using (Gui.Column("WindowsContent")
+                .Margin(0, 0, 0, 0)
+                .Enter())
+            {
+                Gui.Box("PoolCount").Margin(10)
+                    .Text(Origami.Origami.GetPoolSize<Origami.Components.Button>().ToString())
+                    .Alignment(TextAlignment.MiddleCenter)
+                    .Width(150)
+                    .Height(50);
+
+                Origami.Origami.Component<Origami.Components.Button>()
+                    .Radius(Rounding.None)
+                    .Text("Hello World");
+                    // .Finish();
+
+                // Origami.Origami.Component<Origami.Components.Button>()
+                //     .Radius(Rounding.Small)
+                //     .Text("Hello World")
+                //     .Finish();
+                //
+                // Origami.Origami.Component<Origami.Components.Button>()
+                //     .Radius(Rounding.Medium)
+                //     .Text("Hello World")
+                //     .Finish();
+                //
+                // Origami.Origami.Component<Origami.Components.Button>()
+                //     .Radius(Rounding.Large)
+                //     .Text("Hello World")
+                //     .Finish();
+                //
+                // Origami.Origami.Component<Origami.Components.Button>()
+                //     .Radius(Rounding.Full)
+                //     .Text("Hello World")
+                //     .Finish();
+            }
+        }
 
         private static void RenderFooter()
         {
