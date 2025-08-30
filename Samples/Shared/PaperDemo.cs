@@ -44,7 +44,7 @@ namespace Shared
             time += 0.016f; // Assuming ~60fps
 
             //TestWindows();
-
+            Origami.Origami.BeginFrame();
             // Main container with light gray background
             using (Gui.Column("MainContainer")
                 .BackgroundColor(Themes.backgroundColor)
@@ -1031,6 +1031,12 @@ namespace Shared
                             // .StyleIf(isSelected, "period-button-selected")
                             .OnClick((rect) => { Console.WriteLine($"Category {categories[index]} clicked"); });
                     }
+
+                    Origami.Origami.Component<Origami.Components.Button>()
+                        .Radius(Rounding.None)
+                        .Text("Hello World")
+                        .Color(Colors.Light)
+                        .Finish();
                 }
 
                 // Settings content
@@ -1131,28 +1137,33 @@ namespace Shared
 
                 Origami.Origami.Component<Origami.Components.Button>()
                     .Radius(Rounding.None)
-                    .Text("Hello World");
-                    // .Finish();
+                    .Text("Hello World")
+                    .Color(Colors.Light)
+                    .Finish();
 
-                // Origami.Origami.Component<Origami.Components.Button>()
-                //     .Radius(Rounding.Small)
-                //     .Text("Hello World")
-                //     .Finish();
-                //
-                // Origami.Origami.Component<Origami.Components.Button>()
-                //     .Radius(Rounding.Medium)
-                //     .Text("Hello World")
-                //     .Finish();
-                //
-                // Origami.Origami.Component<Origami.Components.Button>()
-                //     .Radius(Rounding.Large)
-                //     .Text("Hello World")
-                //     .Finish();
-                //
-                // Origami.Origami.Component<Origami.Components.Button>()
-                //     .Radius(Rounding.Full)
-                //     .Text("Hello World")
-                //     .Finish();
+                Origami.Origami.Component<Origami.Components.Button>()
+                    .Radius(Rounding.Small)
+                    .Text("Hello World")
+                    .Color(Colors.Light)
+                    .Finish();
+
+                Origami.Origami.Component<Origami.Components.Button>()
+                    .Radius(Rounding.Medium)
+                    .Text("Hello World")
+                    .Color(Colors.Light)
+                    .Finish();
+
+                Origami.Origami.Component<Origami.Components.Button>()
+                    .Radius(Rounding.Large)
+                    .Text("Hello World")
+                    .Color(Colors.Light)
+                    .Finish();
+
+                Origami.Origami.Component<Origami.Components.Button>()
+                    .Radius(Rounding.Full)
+                    .Text("Hello World")
+                    .Color(Colors.Black)
+                    .Finish();
             }
         }
 

@@ -4,17 +4,28 @@
 using Origami.Styling;
 
 using Prowl.PaperUI;
+using Prowl.PaperUI.Events;
 using Prowl.PaperUI.LayoutEngine;
 
 namespace Origami.Components;
 
+
 public class Button : Component<Button>
 {
+    public bool IsWhiteButton = false;
     public override void Finish() => Origami.ReturnToPool(this);
 
+
+    private void OnClickEvent(ClickEvent e)
+    {
+        IsWhiteButton = !IsWhiteButton;
+    }
+
+    //TODO if the user tries to access the state here, it will fail.
     protected override Button OnCreated()
     {
-        _elementBuilder.BorderWidth(1).BorderColor(System.Drawing.Color.Chartreuse).Margin(5);
+        ElementBuilder.BorderWidth(1).BorderColor(System.Drawing.Color.Chartreuse).Margin(5);
+        ElementBuilder.OnClick(OnClickEvent);
         return this;
     }
 
@@ -22,20 +33,20 @@ public class Button : Component<Button>
     {
         return this;
     }
-    public override void Reset()
+    public override void ResetComponent()
     {
-
+        IsWhiteButton = false;
     }
     public Button Color(Colors color)
     {
         //TODO this should define the color, then we define the variant using a different function
-        _elementBuilder.BackgroundColor(System.Drawing.Color.Aqua);
+        ElementBuilder.BackgroundColor(IsWhiteButton? System.Drawing.Color.White : System.Drawing.Color.Aqua);
         return this;
     }
     public Button Radius(Rounding rounding)
     {
         //TODO eventually replace this with a connection to the styling system
-        _elementBuilder.Rounded(5 * (int)rounding);
+        ElementBuilder.Rounded(5 * (int)rounding);
         return this;
     }
 
@@ -46,7 +57,7 @@ public class Button : Component<Button>
 
     public Button Text(string text)
     {
-        _elementBuilder.Text(text)
+        ElementBuilder.Text(text)
             .Alignment(TextAlignment.MiddleCenter)
             .Width(150)
             .Height(50);
@@ -55,19 +66,19 @@ public class Button : Component<Button>
 
     public Button Alignment(TextAlignment alignment)
     {
-        _elementBuilder.Alignment(alignment);
+        ElementBuilder.Alignment(alignment);
         return this;
     }
 
     public Button Width(UnitValue unit)
     {
-        _elementBuilder.Width(unit);
+        ElementBuilder.Width(unit);
         return this;
     }
 
     public Button Height(UnitValue unit)
     {
-        _elementBuilder.Height(unit);
+        ElementBuilder.Height(unit);
         return this;
     }
 }

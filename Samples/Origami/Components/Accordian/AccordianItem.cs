@@ -11,5 +11,5 @@ public class AccordianItem : Component<AccordianItem>
 
     public override AccordianItem Draw() => throw new NotImplementedException();
 
-    public override void Reset() => throw new NotImplementedException();
+    public override void ResetComponent() => throw new NotImplementedException();
 }
