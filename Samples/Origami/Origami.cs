@@ -39,14 +39,14 @@ public static class Origami
 {
     private static bool isInitialized = false;
     private static bool isFrameStarted = false;
+    private static bool isFrameEnded = false;
     public static Paper Gui { get; set; }
     private static ConcurrentDictionary<Type, List<IComponent>> ComponentPool { get; set; }
     private static ConcurrentDictionary<Type, int> PoolSizeLimits { get; set; }
     private static ConcurrentDictionary<Type, Func<IComponent>> Constructors { get; set; }
-    // private static ConcurrentDictionary<Type, List<IState>> StateStorage { get; set; }
     private static ConcurrentDictionary<Type, List<ulong>> IdStorage { get; set; }
     private static ConcurrentDictionary<Type, int> IndexStorage { get; set; }
-    // private static ConcurrentDictionary<Type, Type> StateTypeMap { get; set; }
+    private static ConcurrentDictionary<Type, int> NumberRenderedLastFrame { get; set; }
     public static void Init(Paper paper)
     {
         if (isInitialized) throw new InvalidOperationException("Origami has already been initialized. You cannot do this twice");
@@ -54,18 +54,17 @@ public static class Origami
         ComponentPool = new ConcurrentDictionary<Type, List<IComponent>>();
         Constructors = new ConcurrentDictionary<Type, Func<IComponent>>();
         PoolSizeLimits = new ConcurrentDictionary<Type, int>();
-        // StateStorage = new ConcurrentDictionary<Type, List<IState>>();
         IdStorage = new ConcurrentDictionary<Type, List<ulong>>();
         IndexStorage = new ConcurrentDictionary<Type, int>();
-        // StateTypeMap = new ConcurrentDictionary<Type, Type>();
+        NumberRenderedLastFrame = new ConcurrentDictionary<Type, int>();
 
         Gui = paper;
 
-        RegisterStateComponent<Button>();
-        RegisterStatelessComponent<AccordianItem>();
+        RegisterComponent<Button>();
+        RegisterComponent<AccordianItem>();
     }
 
-    public static void RegisterStatelessComponent<T>(int poolSizeLimit = 128) where T : IComponent, new()
+    public static void RegisterComponent<T>(int poolSizeLimit = 128) where T : IComponent, new()
     {
         if (ComponentPool.ContainsKey(typeof(T)))
             throw new InvalidOperationException($"Component {typeof(T)} was already registered. Please check your code");
@@ -73,16 +72,9 @@ public static class Origami
         Constructors[typeof(T)] = () => new T();
         ComponentPool[typeof(T)] = new();
         PoolSizeLimits[typeof(T)] = poolSizeLimit;
-    }
-
-    public static void RegisterStateComponent<T>(int poolSizeLimit = 128) where T : IComponent, new()
-    {
-        RegisterStatelessComponent<T>();
-
-        // StateStorage[typeof(T)] = new List<IState>();
         IdStorage[typeof(T)] = new List<ulong>();
         IndexStorage[typeof(T)] = 0;
-        // StateTypeMap[typeof(T)] = typeof(T2);
+        NumberRenderedLastFrame[typeof(T)] = 0;
     }
 
     public static void BeginFrame()
@@ -97,7 +89,18 @@ public static class Origami
 
     public static void EndFrame()
     {
+        foreach (Type key in IndexStorage.Keys)
+        {
+            if (NumberRenderedLastFrame[key] > IndexStorage[key])
+            {
+                for (int i = IndexStorage[key]; i < NumberRenderedLastFrame[key]; i++)
+                {
+                    ComponentPool[key][i].ResetComponent();
+                }
+            }
 
+            NumberRenderedLastFrame[key] = IndexStorage[key];
+        }
     }
 
     public static T Component<T>() where T : Component<T>, new()

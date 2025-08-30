@@ -75,6 +75,8 @@ namespace Shared
                 }
             }
 
+
+            Origami.Origami.EndFrame();
             PaperId.Reset();
         }
 
