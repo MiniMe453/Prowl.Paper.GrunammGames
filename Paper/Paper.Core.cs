@@ -180,6 +180,7 @@ namespace Prowl.PaperUI
 
             // Cleanup
             OfOfFrameCleanupStyles(_createdElements);
+            UnitValue.Free();
 
             // Performance measurement
             _timer.Stop();
