@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 
 using Prowl.PaperUI;
+using Prowl.PaperUI.LayoutEngine;
 using Prowl.Vector;
 
 // using Shared.Components;
@@ -186,6 +187,8 @@ namespace Shared
                 Button.IconPrimary("UserProfile", "M")
                     .Margin(0, 15, 15, 0)
                     .OnClick((rect) => Console.WriteLine("Profile clicked"));
+
+                Gui.Box("ID Count").Text(UnitValue.ValueCache.Count.ToString());
             }
         }
 
