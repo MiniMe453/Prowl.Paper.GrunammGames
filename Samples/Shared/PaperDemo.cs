@@ -1154,27 +1154,28 @@ namespace Shared
                     .Height(40)
                     .Finish();
 
-                // using (Origami.Component<Dropdown>("Dropdown 02")
-                //            .Width(250)
-                //            .Height(40)
-                //            .Enter())
-                // {
-                //     Gui.Box("InputField")
-                //         .BackgroundColor(Color.DarkGray)
-                //         .Text("Custom search bar here")
-                //         .Alignment(TextAlignment.MiddleLeft)
-                //         .Height(35)
-                //         .Margin(5)
-                //         .Rounded(5);
-                //
-                //     for (int i = 0; i < testValues.Count; i++)
-                //     {
-                //         Gui.Box("Item", i)
-                //             .Text(testValues[i] + "HEHEHE")
-                //             .Alignment(TextAlignment.MiddleCenter)
-                //             .Height(35);
-                //     }
-                // }
+                using (Origami.Component<Dropdown>("Dropdown 02")
+                           .Width(250)
+                           .Height(40)
+                           .Enter()
+                           .Enter())
+                {
+                    Gui.Box("InputField")
+                        .BackgroundColor(Color.DarkGray)
+                        .Text("Custom search bar here")
+                        .Alignment(TextAlignment.MiddleLeft)
+                        .Height(35)
+                        .Margin(5)
+                        .Rounded(5);
+
+                    for (int i = 0; i < testValues.Count; i++)
+                    {
+                        Gui.Box("Item", i)
+                            .Text(testValues[i] + "HEHEHE")
+                            .Alignment(TextAlignment.MiddleCenter)
+                            .Height(35);
+                    }
+                }
 
                 using (Origami.Component<Modal>("TestModal")
                            .SetVisibility(modalVisible)
@@ -1209,7 +1210,7 @@ namespace Shared
                         Origami.Component<OrigamiUI.Button>("Close Modal")
                             .Radius(Rounding.Full)
                             .Height(35)
-                            .Text("Hello World")
+                            .Text("Close Modal")
                             .Color(Colors.Light)
                             .OnClick(e => modalVisible = false)
                             .Finish();
