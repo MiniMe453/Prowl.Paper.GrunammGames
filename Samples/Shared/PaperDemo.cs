@@ -1033,7 +1033,7 @@ namespace Shared
                             .OnClick((rect) => { Console.WriteLine($"Category {categories[index]} clicked"); });
                     }
 
-                    Origami.Component<OrigamiUI.Button>()
+                    Origami.Component<OrigamiUI.Button>("test button")
                         .Radius(Rounding.None)
                         .Text("Hello World")
                         .Color(Colors.Light)
@@ -1125,6 +1125,7 @@ namespace Shared
 
         private static int maxPoolSize;
         private static int selectedIndex;
+        private static int selectedIndex2;
         private static List<string> testValues = new List<string>() {"Option 01", "Option 02", "Option 03", "Option 04", "Option 05"};
         private static void RenderStylingTab()
         {
@@ -1138,17 +1139,39 @@ namespace Shared
                     .Width(150)
                     .Height(50);
 
-                Origami.Component<OrigamiUI.Button>()
+                Origami.Component<OrigamiUI.Button>("Test Button 02")
                     .Radius(Rounding.None)
                     .Text("Hello World")
                     .Color(Colors.Light)
                     .Finish();
 
-                Origami.Component<Dropdown>()
-                    .SetData(testValues, selectedIndex, idx => selectedIndex = idx)
+                Origami.Component<Dropdown>("Dropdown 01")
+                    .ActiveIndex(selectedIndex)
+                    .SetValues(testValues , idx => selectedIndex = idx)
                     .Width(250)
                     .Height(40)
                     .Finish();
+
+                Origami.Component<Dropdown>("Dropdown 02")
+                    .Width(250)
+                    .Height(40)
+                    .SetDrawingOverride(() =>
+                    {
+                        Gui.Box("InputField")
+                            .BackgroundColor(Color.DarkGray)
+                            .Text("Custom search bar here")
+                            .Alignment(TextAlignment.MiddleLeft)
+                            .Height(35)
+                            .Margin(5)
+                            .Rounded(5);
+                        for (int i = 0; i < testValues.Count; i++)
+                        {
+                            Gui.Box("Item", i)
+                                .Text(testValues[i] + "HEHEHE")
+                                .Alignment(TextAlignment.MiddleCenter)
+                                .Height(35);
+                        }
+                    }).Finish();
                 //TODO This causes problems because of the automatic ID assignment. Need to solve that.
                 // Somehow we need to generate static ideas. The automatic ID generation needs to function
                 // On a parent basis, rather than another system.
