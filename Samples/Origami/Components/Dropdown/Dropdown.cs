@@ -53,8 +53,7 @@ public class Dropdown : Component<Dropdown>
 
     protected override Dropdown OnCreated()
     {
-        ElementBuilder.OnLeave(CloseDropdown)
-            .Margin(10);
+        ElementBuilder.OnLeave(CloseDropdown);
         if(!Origami.Gui.HasElementStorage(ElementBuilder._element, IS_OPENED_KEY))
         {
             Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);

@@ -14,7 +14,7 @@ public class Modal : Component<Modal>, IPersistentState
     private bool _isVisible = false;
     protected override Modal OnCreated()
     {
-        ElementBuilder.BackgroundColor(Color.DimGray)
+        ElementBuilder.BackgroundColor(Color.FromArgb(255, 30,30,30))
             .PositionType(PositionType.SelfDirected)
             .Top(100)
             .Left(100)

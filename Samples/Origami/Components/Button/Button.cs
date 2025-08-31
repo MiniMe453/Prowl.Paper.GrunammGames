@@ -23,7 +23,7 @@ public class Button : Component<Button>
     //TODO if the user tries to access the state here, it will fail.
     protected override Button OnCreated()
     {
-        ElementBuilder.BorderWidth(1).BorderColor(System.Drawing.Color.Chartreuse).Margin(5)
+        ElementBuilder.BorderWidth(2).BorderColor(System.Drawing.Color.DarkGray).Margin(5)
             .OnClick(OnClickEvent);
 
         if (!Origami.Gui.HasElementStorage(ElementBuilder._element, IS_WHITE_BUTTON_KEY))
@@ -45,7 +45,7 @@ public class Button : Component<Button>
     public Button Color(Colors color)
     {
         //TODO this should define the color, then we define the variant using a different function
-        ElementBuilder.BackgroundColor(Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_WHITE_BUTTON_KEY)? System.Drawing.Color.Aqua : System.Drawing.Color.DimGray);
+        ElementBuilder.BackgroundColor(System.Drawing.Color.DimGray);
         return this;
     }
     public Button Radius(Rounding rounding)
@@ -79,9 +79,7 @@ public class Button : Component<Button>
     public Button Text(string text)
     {
         ElementBuilder.Text(text)
-            .Alignment(TextAlignment.MiddleCenter)
-            .Width(150)
-            .Height(50);
+            .Alignment(TextAlignment.MiddleCenter);
         return this;
     }
 

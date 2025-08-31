@@ -1126,8 +1126,14 @@ namespace Shared
         private static int maxPoolSize;
         private static int selectedIndex;
         private static int selectedIndex2;
-        private static string[] testValues = {"Option 01", "Option 02", "Option 03", "Option 04", "Option 05"};
+        private static string[] testValues = {"Train", "Car", "House", "Building", "Bike"};
         private static bool modalVisible = false;
+        private static int currIntValue = 0;
+        private static int proportionalValue = 0;
+        private static int integralValue = 0;
+        private static int derivativeValue = 0;
+        private static int forceValue = 0;
+
         private static void RenderStylingTab()
         {
             using (Gui.Column("WindowsContent")
@@ -1140,90 +1146,159 @@ namespace Shared
                     .Width(150)
                     .Height(50);
 
-                // Origami.Component<OrigamiUI.Button>("Test test modal 02")
-                //     .Radius(Rounding.None)
-                //     .Text("Open Modal")
-                //     .Color(Colors.Light)
-                //     .OnClick(e => modalVisible = !modalVisible)
-                //     .DrawDefault();
-                //
-                // Origami.Component<OrigamiUI.Button>("Test Button 02")
-                //     .Radius(Rounding.None)
-                //     .Text("Change button color")
-                //     .Color(Colors.Light)
-                //     .Radius(Rounding.Medium)
-                //     .DrawDefault();
-                //
-                // Origami.Component<Dropdown>("Dropdown 01")
-                //     .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
-                //     .DisplayValue(testValues[selectedIndex])
-                //     .Width(250)
-                //     .Height(40)
-                //     .DrawDefault();
-                //
-                // using (Origami.Component<Dropdown>("Dropdown 02")
-                //            .Width(250)
-                //            .Height(40)
-                //            .DisplayValue(testValues[selectedIndex])
-                //            .ContentBox()
-                //            .Enter())
-                // {
-                //     Gui.Box("InputField")
-                //         .BackgroundColor(Color.DarkGray)
-                //         .Text("Custom search bar here")
-                //         .Alignment(TextAlignment.MiddleLeft)
-                //         .Height(35)
-                //         .Margin(5)
-                //         .Rounded(5);
-                //
-                //     for (int i = 0; i < testValues.Length; i++)
-                //     {
-                //         Gui.Box("Item", i)
-                //             .Text(testValues[i] + "HEHEHE")
-                //             .Alignment(TextAlignment.MiddleCenter)
-                //             .Height(35);
-                //     }
-                // }
-                //
-                // using (Origami.Component<Modal>("TestModal")
-                //            .SetVisibility(modalVisible)
-                //            .DrawDefault()
-                //            .Enter())
-                // {
-                //     using (Gui.Column("ModalColumn").Enter())
-                //     {
-                //         Origami.Component<Dropdown>("Dropdown 01")
-                //             .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
-                //             .DisplayValue(testValues[selectedIndex])
-                //             .Width(250)
-                //             .Height(40)
-                //             .DrawDefault();
-                //
-                //         Gui.Box("InputField")
-                //             .BackgroundColor(Color.DarkGray)
-                //             .Text("Custom search bar here")
-                //             .Alignment(TextAlignment.MiddleLeft)
-                //             .Height(35)
-                //             .Margin(5)
-                //             .Rounded(5);
-                //
-                //         for (int i = 0; i < 3; i++)
-                //         {
-                //             Gui.Box("Item", i)
-                //                 .Text(testValues[i] + "HEHEHE")
-                //                 .Alignment(TextAlignment.MiddleCenter)
-                //                 .Height(35);
-                //         }
-                //
-                //         Origami.Component<OrigamiUI.Button>("Close Modal")
-                //             .Radius(Rounding.Full)
-                //             .Height(35)
-                //             .Text("Close Modal")
-                //             .Color(Colors.Light)
-                //             .OnClick(e => modalVisible = false)
-                //             .DrawDefault();
-                //     }
-                // }
+                Origami.Component<OrigamiUI.Button>("Test test modal 02")
+                    .Radius(Rounding.None)
+                    .Text("Open testing popup")
+                    .Color(Colors.Light)
+                    .OnClick(e => modalVisible = !modalVisible)
+                    .DrawDefault()
+                    .Width(150)
+                    .Height(40);
+
+                Origami.Component<OrigamiUI.Button>("Test Button 02")
+                    .Radius(Rounding.None)
+                    .Text("Change button color")
+                    .Color(Colors.Light)
+                    .Radius(Rounding.Medium)
+                    .DrawDefault()
+                    .Width(150)
+                    .Height(40);;
+
+                Origami.Component<Dropdown>("Dropdown 01")
+                    .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
+                    .DisplayValue(testValues[selectedIndex])
+                    .Width(250)
+                    .Height(40)
+                    .DrawDefault();
+
+                using (Origami.Component<Dropdown>("Dropdown 02")
+                           .Width(250)
+                           .Height(40)
+                           .DisplayValue(testValues[selectedIndex])
+                           .ContentBox()
+                           .Enter())
+                {
+                    Gui.Box("InputField")
+                        .BackgroundColor(Color.DarkGray)
+                        .Text("Custom search bar here")
+                        .Alignment(TextAlignment.MiddleLeft)
+                        .Height(35)
+                        .Margin(5)
+                        .Rounded(5);
+
+                    for (int i = 0; i < testValues.Length; i++)
+                    {
+                        Gui.Box("Item", i)
+                            .Text(testValues[i] + "HEHEHE")
+                            .Alignment(TextAlignment.MiddleCenter)
+                            .Height(35);
+                    }
+                }
+
+                using (Origami.Component<Modal>("TestModal")
+                           .SetVisibility(modalVisible)
+                           .DrawDefault()
+                           .Width(250)
+                           .Height(250)
+                           .Enter())
+                {
+                    using (Gui.Column("ModalColumn")
+                               .Enter())
+                    {
+                        using (Gui.Row("Demo")
+                                   .Height(Gui.Stretch())
+                                   .Margin(5)
+                                   .Enter())
+                        {
+                            Gui.Box("DemoText")
+                                .Text("Demo")
+                                .Alignment(TextAlignment.MiddleLeft)
+                                .TextColor(Color.White);
+
+                            Origami.Component<Dropdown>("Dropdown 01")
+                                .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
+                                .DisplayValue(testValues[selectedIndex])
+                                .Width(150)
+                                .DrawDefault();
+                        }
+
+                        using (Gui.Row("Proportional")
+                                   .Height(Gui.Stretch())
+                                   .Margin(5)
+                                   .Enter())
+                        {
+                            Gui.Box("DemoText")
+                                .Text("Proportional (P)")
+                                .Alignment(TextAlignment.MiddleLeft)
+                                .TextColor(Color.DodgerBlue);
+
+                            Origami.Component<IntInput>("PropValue")
+                                .SetData(proportionalValue, i => proportionalValue = i)
+                                .SetRange(-100, 100)
+                                .DrawDefault()
+                                .Width(75);
+                        }
+
+                        using (Gui.Row("Integral")
+                                   .Height(Gui.Stretch())
+                                   .Margin(5)
+                                   .Enter())
+                        {
+                            Gui.Box("DemoText")
+                                .Text("Integral (I)")
+                                .Alignment(TextAlignment.MiddleLeft)
+                                .TextColor(Color.SeaGreen);
+
+                            Origami.Component<IntInput>("PropValue")
+                                .SetData(integralValue, i => integralValue = i)
+                                .SetRange(0, 1000)
+                                .DrawDefault()
+                                .Width(75);
+                        }
+
+                        using (Gui.Row("Derivative")
+                                   .Height(Gui.Stretch())
+                                   .Margin(5)
+                                   .Enter())
+                        {
+                            Gui.Box("DemoText")
+                                .Text("Derivative (D)")
+                                .Alignment(TextAlignment.MiddleLeft)
+                                .TextColor(Color.IndianRed);
+
+                            Origami.Component<IntInput>("PropValue")
+                                .SetData(derivativeValue, i => derivativeValue = i)
+                                .SetRange(0, 10)
+                                .DrawDefault()
+                                .Width(75);
+                        }
+
+                        using (Gui.Row("Force")
+                                   .Height(Gui.Stretch())
+                                   .Margin(5)
+                                   .Enter())
+                        {
+                            Gui.Box("DemoText")
+                                .Text("Force")
+                                .Alignment(TextAlignment.MiddleLeft)
+                                .TextColor(Color.White);
+
+                            Origami.Component<IntInput>("PropValue")
+                                .SetData(forceValue, i => forceValue = i)
+                                .DrawDefault()
+                                .Width(75);
+                        }
+
+
+                        Origami.Component<OrigamiUI.Button>("Close Modal")
+                            .Radius(Rounding.Full)
+                            .Height(35)
+                            .Text("Close Modal")
+                            .Color(Colors.Light)
+                            .OnClick(e => modalVisible = false)
+                            .DrawDefault();
+                    }
+                }
                 //TODO This causes problems because of the automatic ID assignment. Need to solve that.
                 // Somehow we need to generate static ideas. The automatic ID generation needs to function
                 // On a parent basis, rather than another system.

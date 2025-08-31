@@ -71,6 +71,7 @@ public static class Origami
         RegisterComponent<AccordianItem>();
         RegisterComponent<Dropdown>();
         RegisterComponent<Modal>();
+        RegisterComponent<IntInput>();
     }
 
     public static void RegisterComponent<T>(int poolSizeLimit = 128) where T : IComponent, new()
