@@ -9,18 +9,29 @@ using Prowl.PaperUI.LayoutEngine;
 
 namespace OrigamiUI;
 
+[Flags]
+public enum DropdownFlags
+{
+
+}
+
 public class Dropdown : Component<Dropdown>, IPersistentState
 {
-    private bool _isOpened = false;
     private Action<int> _onItemSelected;
-    private Action _drawCustomContent;
     private int _selectedIdx;
+    private string _displayValue;
     private List<string> _values = new();
-    private bool _useSimpleDropdown = false;
 
-    public override ElementBuilder Finish()
+    private const string IS_OPENED_KEY = "IsOpened";
+    private const string USE_SIMPLE_DROPDOWN = "UseSimpleDropdown";
+
+    public override ElementBuilder DrawDefault()
     {
-        using (Enter().Enter())
+        if (!Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, USE_SIMPLE_DROPDOWN))
+            throw new InvalidOperationException(
+                "In order to use DrawDefault(), you must use ActiveIndex() and SetValues()");
+
+        using (ContentBox().Enter())
         {
             DrawDropdownContent(Origami.Gui);
         }
@@ -29,29 +40,47 @@ public class Dropdown : Component<Dropdown>, IPersistentState
 
     private void ShowDropdown(ClickEvent e)
     {
-        _isOpened = !_isOpened;
+        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY,
+            !Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_OPENED_KEY));
+
+        bool key = Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_OPENED_KEY);
+    }
+
+    private void CloseDropdown(ElementEvent e)
+    {
+        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
     }
 
     protected override Dropdown OnCreated()
     {
-        ElementBuilder.OnClick(ShowDropdown)
-            .OnLeave(e => _isOpened = false)
+        ElementBuilder.OnLeave(CloseDropdown)
             .Margin(10);
+        if(!Origami.Gui.HasElementStorage(ElementBuilder._element, IS_OPENED_KEY))
+        {
+            Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
+            Origami.Gui.SetElementStorage(ElementBuilder._element, USE_SIMPLE_DROPDOWN, false);
+        }
+
         return this;
     }
 
-    public ElementBuilder Enter()
+    public ElementBuilder ContentBox()
     {
+        if (String.IsNullOrEmpty(_displayValue))
+            throw new InvalidOperationException(
+                "You must call DisplayValue(string) before rendering anything to the screen");
+
         Paper gui = Origami.Gui;
         using(ElementBuilder.Enter())
         {
             using (gui.Row("Preview Information")
                        .Margin(5, 0)
+                       .OnClick(ShowDropdown)
                        .Enter())
             {
                 gui.Box("Preview Text")
-                    .Text(_useSimpleDropdown ? _values[_selectedIdx] : "Hello world preview")
-                    .Alignment(TextAlignment.MiddleCenter)
+                    .Text(_displayValue)
+                    .Alignment(TextAlignment.MiddleLeft)
                     .Left(gui.Pixels(5));
 
                 // using(gui.Box("MenuItemIcon")
@@ -59,86 +88,35 @@ public class Dropdown : Component<Dropdown>, IPersistentState
                 //           .Enter()) {}
             }
 
-
             return gui.Box("Dropdown Content Box")
                 .PositionType(PositionType.SelfDirected)
                 .Top(gui.Percent(100, 1))
                 .Width(250)
                 .Height(UnitValue.Auto)
-                .Visible(_isOpened)
-                // .BorderWidth(2)
-                // .BorderColor(Themes.primaryColor)
+                .Visible(Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_OPENED_KEY))
                 .Layer(Layer.Topmost)
                 .Rounded(5)
                 .BoxShadow(0, 6, 16, -5, Color.FromArgb(128, Color.Black));
         }
     }
 
-    public Dropdown ActiveIndex(int idx)
+    public Dropdown SetValues(List<string> values, Action<int> onItemSelected, int idx)
     {
-        _selectedIdx = idx;
-        return this;
-    }
-
-    public Dropdown SetValues(List<string> values, Action<int> onItemSelected)
-    {
-        _useSimpleDropdown = true;
         _onItemSelected = onItemSelected;
         _values = values;
+        _selectedIdx = idx;
+        Origami.Gui.SetElementStorage(ElementBuilder._element, USE_SIMPLE_DROPDOWN, true);
         return this;
     }
 
-    public Dropdown SetDrawingOverride(Action customDrawFunc)
+    public Dropdown DisplayValue(string value)
     {
-        _drawCustomContent = customDrawFunc;
+        _displayValue = value;
         return this;
     }
 
     public override Dropdown Draw()
     {
-        Paper gui = Origami.Gui;
-        var cleanup = ElementBuilder.Enter();
-        using (gui.Row("Preview Information")
-                   .Margin(5, 0)
-                   .Enter())
-        {
-            using (gui.Box("Preview Text")
-                       .Text(_useSimpleDropdown? _values[_selectedIdx] : "Hello world preview")
-                       .Alignment(TextAlignment.MiddleCenter)
-                       .Left(gui.Pixels(5))
-                       .Enter())
-            { }
-
-            // using(gui.Box("MenuItemIcon")
-            //           .Text(Icons.ArrowDown)
-            //           .Enter()) {}
-        }
-
-        if (!_isOpened)
-        {
-            cleanup.Dispose();
-            return this;
-        }
-
-        using (gui.Box("Dropdown Content Box")
-                   .PositionType(PositionType.SelfDirected)
-                   .Top(gui.Percent(100, 1))
-                   .Width(250)
-                   .Height(UnitValue.Auto)
-                   // .BorderWidth(2)
-                   // .BorderColor(Themes.primaryColor)
-                   .Layer(Layer.Overlay)
-                   .Rounded(5)
-                   .BoxShadow(0, 6, 16, -5, Color.FromArgb(128, Color.Black))
-                   .Enter())
-        {
-            if (_useSimpleDropdown)
-                DrawDropdownContent(gui);
-            else
-                _drawCustomContent?.Invoke();;
-        }
-
-        cleanup.Dispose();
         return this;
     }
 
@@ -160,10 +138,9 @@ public class Dropdown : Component<Dropdown>, IPersistentState
                     .OnClick(e =>
                     {
                         _onItemSelected.Invoke(idx);
+                        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
                     })
                     .BackgroundColor(tabColor)
-                    // .BorderWidth(1)
-                    // .BorderColor(Color.FromArgb(50, Color.White))
                     .Rounded(i == 0 ? 5 : 0, i == 0 ? 5 : 0, i == _values.Count - 1 ? 5 : 0,
                         i == _values.Count - 1 ? 5 : 0);
             }
@@ -183,10 +160,11 @@ public class Dropdown : Component<Dropdown>, IPersistentState
 
     public void Reset()
     {
-        _isOpened = false;
+        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
         _onItemSelected = null;
         _selectedIdx = 0;
         _values.Clear();
-        _useSimpleDropdown = false;
+        _displayValue = "";
+        Origami.Gui.SetElementStorage(ElementBuilder._element, USE_SIMPLE_DROPDOWN, false);
     }
 }

@@ -10,7 +10,7 @@ namespace OrigamiUI;
 
 public class Modal : Component<Modal>, IPersistentState
 {
-    public override ElementBuilder Finish() => ElementBuilder.Visible(_isVisible);
+    public override ElementBuilder DrawDefault() => ElementBuilder.Visible(_isVisible);
     private bool _isVisible = false;
     protected override Modal OnCreated()
     {

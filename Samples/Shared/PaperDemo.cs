@@ -1037,7 +1037,7 @@ namespace Shared
                         .Radius(Rounding.None)
                         .Text("Hello World")
                         .Color(Colors.Light)
-                        .Finish();
+                        .DrawDefault();
                 }
 
                 // Settings content
@@ -1126,7 +1126,7 @@ namespace Shared
         private static int maxPoolSize;
         private static int selectedIndex;
         private static int selectedIndex2;
-        private static List<string> testValues = new List<string>() {"Option 01", "Option 02", "Option 03", "Option 04", "Option 05"};
+        private static string[] testValues = {"Option 01", "Option 02", "Option 03", "Option 04", "Option 05"};
         private static bool modalVisible = false;
         private static void RenderStylingTab()
         {
@@ -1145,19 +1145,20 @@ namespace Shared
                     .Text("Hello World")
                     .Color(Colors.Light)
                     .OnClick(e => modalVisible = !modalVisible)
-                    .Finish();
+                    .DrawDefault();
 
                 Origami.Component<Dropdown>("Dropdown 01")
-                    .ActiveIndex(selectedIndex)
-                    .SetValues(testValues , idx => selectedIndex = idx)
+                    .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
+                    .DisplayValue(testValues[selectedIndex])
                     .Width(250)
                     .Height(40)
-                    .Finish();
+                    .DrawDefault();
 
                 using (Origami.Component<Dropdown>("Dropdown 02")
                            .Width(250)
                            .Height(40)
-                           .Enter()
+                           .DisplayValue(testValues[selectedIndex])
+                           .ContentBox()
                            .Enter())
                 {
                     Gui.Box("InputField")
@@ -1168,7 +1169,7 @@ namespace Shared
                         .Margin(5)
                         .Rounded(5);
 
-                    for (int i = 0; i < testValues.Count; i++)
+                    for (int i = 0; i < testValues.Length; i++)
                     {
                         Gui.Box("Item", i)
                             .Text(testValues[i] + "HEHEHE")
@@ -1179,17 +1180,17 @@ namespace Shared
 
                 using (Origami.Component<Modal>("TestModal")
                            .SetVisibility(modalVisible)
-                           .Finish()
+                           .DrawDefault()
                            .Enter())
                 {
                     using (Gui.Column("ModalColumn").Enter())
                     {
                         Origami.Component<Dropdown>("Dropdown 01")
-                            .ActiveIndex(selectedIndex)
-                            .SetValues(testValues , idx => selectedIndex = idx)
+                            .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
+                            .DisplayValue(testValues[selectedIndex])
                             .Width(250)
                             .Height(40)
-                            .Finish();
+                            .DrawDefault();
 
                         Gui.Box("InputField")
                             .BackgroundColor(Color.DarkGray)
@@ -1213,7 +1214,7 @@ namespace Shared
                             .Text("Close Modal")
                             .Color(Colors.Light)
                             .OnClick(e => modalVisible = false)
-                            .Finish();
+                            .DrawDefault();
                     }
                 }
                 //TODO This causes problems because of the automatic ID assignment. Need to solve that.

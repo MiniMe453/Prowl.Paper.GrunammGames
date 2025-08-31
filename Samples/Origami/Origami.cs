@@ -31,7 +31,7 @@ public abstract class Component<T>  : IComponent
     }
 
     public ElementBuilder GetBuilder() => ElementBuilder;
-    public abstract ElementBuilder Finish();
+    public abstract ElementBuilder DrawDefault();
 
     protected abstract T OnCreated();
     public abstract T Draw();

@@ -7,7 +7,7 @@ namespace OrigamiUI;
 
 public class AccordianItem : Component<AccordianItem>
 {
-    public override ElementBuilder Finish() => ElementBuilder;
+    public override ElementBuilder DrawDefault() => ElementBuilder;
 
     protected override AccordianItem OnCreated() => throw new NotImplementedException();
 

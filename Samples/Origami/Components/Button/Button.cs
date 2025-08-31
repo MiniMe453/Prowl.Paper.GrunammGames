@@ -10,7 +10,7 @@ namespace OrigamiUI;
 public class Button : Component<Button>, IPersistentState
 {
     public bool IsWhiteButton = false;
-    public override ElementBuilder Finish() => ElementBuilder;
+    public override ElementBuilder DrawDefault() => ElementBuilder;
     private void OnClickEvent(ClickEvent e)
     {
         IsWhiteButton = !IsWhiteButton;
