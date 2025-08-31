@@ -18,9 +18,51 @@ public class Dropdown : Component<Dropdown>, IPersistentState
     private List<string> _values = new();
     private bool _useSimpleDropdown = false;
 
-    public override void Finish()
+    public override ElementBuilder Finish()
     {
-        Draw();
+        Paper gui = Origami.Gui;
+        using(ElementBuilder.Enter())
+        {
+            using (gui.Row("Preview Information")
+                       .Margin(5, 0)
+                       .Enter())
+            {
+                using (gui.Box("Preview Text")
+                           .Text(_useSimpleDropdown? _values[_selectedIdx] : "Hello world preview")
+                           .Alignment(TextAlignment.MiddleCenter)
+                           .Left(gui.Pixels(5))
+                           .Enter())
+                {
+                }
+
+                // using(gui.Box("MenuItemIcon")
+                //           .Text(Icons.ArrowDown)
+                //           .Enter()) {}
+            }
+
+            if (_isOpened)
+            {
+                return gui.Box("Dropdown Content Box")
+                    .PositionType(PositionType.SelfDirected)
+                    .Top(gui.Percent(100, 1))
+                    .Width(250)
+                    .Height(UnitValue.Auto)
+                    // .BorderWidth(2)
+                    // .BorderColor(Themes.primaryColor)
+                    .Layer(Layer.Overlay)
+                    .Rounded(5)
+                    .BoxShadow(0, 6, 16, -5, Color.FromArgb(128, Color.Black));
+
+                // if (_useSimpleDropdown)
+                //     DrawDropdownContent(gui);
+                // else
+                //     _drawCustomContent?.Invoke();;
+                // return dropdownCleanup;
+                // dropdownCleanup.Dispose();
+            }
+        }
+
+        return ElementBuilder;
     }
 
     private void ShowDropdown(ClickEvent e)
@@ -58,30 +100,27 @@ public class Dropdown : Component<Dropdown>, IPersistentState
                 //           .Enter()) {}
             }
 
-            if (_isOpened)
-            {
-                var dropdownCleanup = gui.Box("Dropdown Content Box")
-                    .PositionType(PositionType.SelfDirected)
-                    .Top(gui.Percent(100, 1))
-                    .Width(250)
-                    .Height(UnitValue.Auto)
-                    // .BorderWidth(2)
-                    // .BorderColor(Themes.primaryColor)
-                    .Layer(Layer.Overlay)
-                    .Rounded(5)
-                    .BoxShadow(0, 6, 16, -5, Color.FromArgb(128, Color.Black))
-                    .Enter();
 
-                if (_useSimpleDropdown)
-                    DrawDropdownContent(gui);
-                else
-                    _drawCustomContent?.Invoke();;
+            return gui.Box("Dropdown Content Box")
+                .PositionType(PositionType.SelfDirected)
+                .Top(gui.Percent(100, 1))
+                .Width(250)
+                .Height(150)
+                .Visible(_isOpened)
+                // .BorderWidth(2)
+                // .BorderColor(Themes.primaryColor)
+                .Layer(Layer.Overlay)
+                .Rounded(5)
+                .BoxShadow(0, 6, 16, -5, Color.FromArgb(128, Color.Black))
+                .Enter();
+
+                // if (_useSimpleDropdown)
+                //     DrawDropdownContent(gui);
+                // else
+                //     _drawCustomContent?.Invoke();;
                 // return dropdownCleanup;
-                dropdownCleanup.Dispose();
-            }
-        }
 
-        return null;
+        }
     }
 
     public Dropdown ActiveIndex(int idx)

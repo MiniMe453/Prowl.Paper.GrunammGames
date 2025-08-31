@@ -1127,6 +1127,7 @@ namespace Shared
         private static int selectedIndex;
         private static int selectedIndex2;
         private static List<string> testValues = new List<string>() {"Option 01", "Option 02", "Option 03", "Option 04", "Option 05"};
+        private static bool modalVisible = false;
         private static void RenderStylingTab()
         {
             using (Gui.Column("WindowsContent")
@@ -1143,6 +1144,7 @@ namespace Shared
                     .Radius(Rounding.None)
                     .Text("Hello World")
                     .Color(Colors.Light)
+                    .OnClick(e => modalVisible = !modalVisible)
                     .Finish();
 
                 Origami.Component<Dropdown>("Dropdown 01")
@@ -1152,11 +1154,42 @@ namespace Shared
                     .Height(40)
                     .Finish();
 
-                Origami.Component<Dropdown>("Dropdown 02")
-                    .Width(250)
-                    .Height(40)
-                    .SetDrawingOverride(() =>
+                // using (Origami.Component<Dropdown>("Dropdown 02")
+                //            .Width(250)
+                //            .Height(40)
+                //            .Enter())
+                // {
+                //     Gui.Box("InputField")
+                //         .BackgroundColor(Color.DarkGray)
+                //         .Text("Custom search bar here")
+                //         .Alignment(TextAlignment.MiddleLeft)
+                //         .Height(35)
+                //         .Margin(5)
+                //         .Rounded(5);
+                //
+                //     for (int i = 0; i < testValues.Count; i++)
+                //     {
+                //         Gui.Box("Item", i)
+                //             .Text(testValues[i] + "HEHEHE")
+                //             .Alignment(TextAlignment.MiddleCenter)
+                //             .Height(35);
+                //     }
+                // }
+
+                using (Origami.Component<Modal>("TestModal")
+                           .SetVisibility(modalVisible)
+                           .Finish()
+                           .Enter())
+                {
+                    using (Gui.Column("ModalColumn").Enter())
                     {
+                        Origami.Component<Dropdown>("Dropdown 01")
+                            .ActiveIndex(selectedIndex)
+                            .SetValues(testValues , idx => selectedIndex = idx)
+                            .Width(250)
+                            .Height(40)
+                            .Finish();
+
                         Gui.Box("InputField")
                             .BackgroundColor(Color.DarkGray)
                             .Text("Custom search bar here")
@@ -1164,14 +1197,24 @@ namespace Shared
                             .Height(35)
                             .Margin(5)
                             .Rounded(5);
-                        for (int i = 0; i < testValues.Count; i++)
+
+                        for (int i = 0; i < 3; i++)
                         {
                             Gui.Box("Item", i)
                                 .Text(testValues[i] + "HEHEHE")
                                 .Alignment(TextAlignment.MiddleCenter)
                                 .Height(35);
                         }
-                    }).Finish();
+
+                        Origami.Component<OrigamiUI.Button>("Close Modal")
+                            .Radius(Rounding.Full)
+                            .Height(35)
+                            .Text("Hello World")
+                            .Color(Colors.Light)
+                            .OnClick(e => modalVisible = false)
+                            .Finish();
+                    }
+                }
                 //TODO This causes problems because of the automatic ID assignment. Need to solve that.
                 // Somehow we need to generate static ideas. The automatic ID generation needs to function
                 // On a parent basis, rather than another system.

@@ -30,8 +30,8 @@ public abstract class Component<T>  : IComponent
         return OnCreated();
     }
 
-    public ElementBuilder Escape() => ElementBuilder;
-    public abstract void Finish();
+    public ElementBuilder GetBuilder() => ElementBuilder;
+    public abstract ElementBuilder Finish();
 
     protected abstract T OnCreated();
     public abstract T Draw();
@@ -70,6 +70,7 @@ public static class Origami
         RegisterComponent<Button>();
         RegisterComponent<AccordianItem>();
         RegisterComponent<Dropdown>();
+        RegisterComponent<Modal>();
     }
 
     public static void RegisterComponent<T>(int poolSizeLimit = 128) where T : IComponent, new()

@@ -10,17 +10,24 @@ namespace OrigamiUI;
 public class Button : Component<Button>, IPersistentState
 {
     public bool IsWhiteButton = false;
-    public override void Finish() => Origami.ReturnToPool(this);
+    public override ElementBuilder Finish() => ElementBuilder;
     private void OnClickEvent(ClickEvent e)
     {
         IsWhiteButton = !IsWhiteButton;
     }
 
+
+
     //TODO if the user tries to access the state here, it will fail.
     protected override Button OnCreated()
     {
         ElementBuilder.BorderWidth(1).BorderColor(System.Drawing.Color.Chartreuse).Margin(5);
-        ElementBuilder.OnClick(OnClickEvent);
+        return this;
+    }
+
+    public Button OnClick(Action<ClickEvent> onClick)
+    {
+        ElementBuilder.OnClick(onClick);
         return this;
     }
 
