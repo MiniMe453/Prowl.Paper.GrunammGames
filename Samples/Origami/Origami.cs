@@ -10,6 +10,11 @@ public interface IComponent
     // public void ResetComponent();
 }
 
+public interface IState
+{
+
+}
+
 public interface IPersistentState
 {
     public void Reset();
@@ -19,9 +24,9 @@ public abstract class Component<T>  : IComponent
     where T : Component<T>
 {
     public ElementBuilder ElementBuilder;
-    public T Create()
+    public T Create(string id)
     {
-        ElementBuilder = Origami.Gui.Box(PaperId.Next()).BackgroundColor(Color.Black);
+        ElementBuilder = Origami.Gui.Box(id).BackgroundColor(Color.Black);
         return OnCreated();
     }
 
@@ -107,7 +112,7 @@ public static class Origami
         }
     }
 
-    public static T Component<T>() where T : Component<T>, new()
+    public static T Component<T>(string id) where T : Component<T>, new()
     {
         if (!isInitialized) throw new InvalidOperationException("Origami has not been initialized. Call Origami.Init() first.");
         if (!isFrameStarted)
@@ -129,7 +134,7 @@ public static class Origami
         }
 
         var newComponent = (T)componentList[index];
-        newComponent.Create();
+        newComponent.Create(id);
 
         if(IdStorage[typeof(T)][index] != newComponent.ElementBuilder._element.ID)
         {
