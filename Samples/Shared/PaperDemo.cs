@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 
-using Origami.Styling;
-using Origami.Utils;
+using OrigamiUI;
 
 using Prowl.PaperUI;
 using Prowl.Vector;
@@ -35,7 +34,7 @@ namespace Shared
             Gui = paper;
             Fonts.Initialize(Gui);
             Themes.Initialize();
-            Origami.Origami.Init(Gui);
+            Origami.Init(Gui);
         }
 
         public static void RenderUI()
@@ -44,7 +43,7 @@ namespace Shared
             time += 0.016f; // Assuming ~60fps
 
             //TestWindows();
-            Origami.Origami.BeginFrame();
+            Origami.BeginFrame();
             // Main container with light gray background
             using (Gui.Column("MainContainer")
                 .BackgroundColor(Themes.backgroundColor)
@@ -76,7 +75,7 @@ namespace Shared
             }
 
 
-            Origami.Origami.EndFrame();
+            Origami.EndFrame();
             PaperId.Reset();
         }
 
@@ -1034,7 +1033,7 @@ namespace Shared
                             .OnClick((rect) => { Console.WriteLine($"Category {categories[index]} clicked"); });
                     }
 
-                    Origami.Origami.Component<Origami.Components.Button>()
+                    Origami.Component<OrigamiUI.Button>()
                         .Radius(Rounding.None)
                         .Text("Hello World")
                         .Color(Colors.Light)
@@ -1125,6 +1124,8 @@ namespace Shared
         //}
 
         private static int maxPoolSize;
+        private static int selectedIndex;
+        private static List<string> testValues = new List<string>() {"Option 01", "Option 02", "Option 03", "Option 04", "Option 05"};
         private static void RenderStylingTab()
         {
             using (Gui.Column("WindowsContent")
@@ -1132,40 +1133,60 @@ namespace Shared
                 .Enter())
             {
                 Gui.Box("PoolCount").Margin(10)
-                    .Text(Origami.Origami.GetPoolSize<Origami.Components.Button>().ToString())
+                    .Text(Origami.GetPoolSize<OrigamiUI.Button>().ToString())
                     .Alignment(TextAlignment.MiddleCenter)
                     .Width(150)
                     .Height(50);
 
-                Origami.Origami.Component<Origami.Components.Button>()
+                Origami.Component<OrigamiUI.Button>()
                     .Radius(Rounding.None)
                     .Text("Hello World")
                     .Color(Colors.Light)
                     .Finish();
 
-                Origami.Origami.Component<Origami.Components.Button>()
-                    .Radius(Rounding.Small)
-                    .Text("Hello World")
-                    .Color(Colors.Light)
+                Origami.Component<Dropdown>()
+                    .SetData(testValues, selectedIndex, idx => selectedIndex = idx)
+                    .Width(250)
+                    .Height(40)
                     .Finish();
+                //TODO This causes problems because of the automatic ID assignment. Need to solve that.
+                // Somehow we need to generate static ideas. The automatic ID generation needs to function
+                // On a parent basis, rather than another system.
+                // Maybe it's better to just force the user to put the ID in themselves. That would also put it more in line
+                // with the Paper system, so the expectations of the user are similar across both systems
+                // If we are going to do automatic ID, that needs to be implemented on a paper level, rather than
+                // component library level
+                //Origami.Component<Dropdown>()
+                //     .SetData(testValues, selectedIndex, idx => selectedIndex = idx)
+                //     .Width(250)
+                //     .Height(40)
+                //     .Finish();
 
-                Origami.Origami.Component<Origami.Components.Button>()
-                    .Radius(Rounding.Medium)
-                    .Text("Hello World")
-                    .Color(Colors.Light)
-                    .Finish();
 
-                Origami.Origami.Component<Origami.Components.Button>()
-                    .Radius(Rounding.Large)
-                    .Text("Hello World")
-                    .Color(Colors.Light)
-                    .Finish();
-
-                Origami.Origami.Component<Origami.Components.Button>()
-                    .Radius(Rounding.Full)
-                    .Text("Hello World")
-                    .Color(Colors.Black)
-                    .Finish();
+                // TODO The ID issue doesn't happen for stateless objects, only stated based objects.
+                // Origami.Component<OrigamiUI.Button>()
+                //     .Radius(Rounding.Small)
+                //     .Text("Hello World")
+                //     .Color(Colors.Light)
+                //     .Finish();
+                //
+                // Origami.Component<OrigamiUI.Button>()
+                //     .Radius(Rounding.Medium)
+                //     .Text("Hello World")
+                //     .Color(Colors.Light)
+                //     .Finish();
+                //
+                // Origami.Component<OrigamiUI.Button>()
+                //     .Radius(Rounding.Large)
+                //     .Text("Hello World")
+                //     .Color(Colors.Light)
+                //     .Variant(StyleVariants.Faded);
+                //
+                // Origami.Component<OrigamiUI.Button>()
+                //     .Radius(Rounding.Full)
+                //     .Text("Hello World")
+                //     .Color(Colors.Black)
+                //     .Finish();
             }
         }
 

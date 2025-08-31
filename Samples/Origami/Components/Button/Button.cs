@@ -1,21 +1,16 @@
 // This file is part of the Prowl Game Engine
 // Licensed under the MIT License. See the LICENSE file in the project root for details.
-
-using Origami.Styling;
-
 using Prowl.PaperUI;
 using Prowl.PaperUI.Events;
 using Prowl.PaperUI.LayoutEngine;
 
-namespace Origami.Components;
+namespace OrigamiUI;
 
 
-public class Button : Component<Button>
+public class Button : Component<Button>, IPersistentState
 {
     public bool IsWhiteButton = false;
     public override void Finish() => Origami.ReturnToPool(this);
-
-
     private void OnClickEvent(ClickEvent e)
     {
         IsWhiteButton = !IsWhiteButton;
@@ -33,14 +28,11 @@ public class Button : Component<Button>
     {
         return this;
     }
-    public override void ResetComponent()
-    {
-        IsWhiteButton = false;
-    }
+
     public Button Color(Colors color)
     {
         //TODO this should define the color, then we define the variant using a different function
-        ElementBuilder.BackgroundColor(IsWhiteButton? System.Drawing.Color.White : System.Drawing.Color.Aqua);
+        ElementBuilder.BackgroundColor(IsWhiteButton? System.Drawing.Color.Aqua : System.Drawing.Color.DimGray);
         return this;
     }
     public Button Radius(Rounding rounding)
@@ -52,6 +44,22 @@ public class Button : Component<Button>
 
     public Button Variant(StyleVariants variant)
     {
+        switch (variant)
+        {
+            case StyleVariants.Faded:
+                ElementBuilder.Style("faded");
+                break;
+            case StyleVariants.Flat:
+                ElementBuilder.Style("flat");
+                break;
+            case StyleVariants.Solid:
+                ElementBuilder.Style("solid");
+                break;
+            case StyleVariants.Transparent:
+                ElementBuilder.Style("transparent");
+                break;
+        }
+
         return this;
     }
 
@@ -81,4 +89,6 @@ public class Button : Component<Button>
         ElementBuilder.Height(unit);
         return this;
     }
+
+    public void Reset() => IsWhiteButton = false;
 }

@@ -4,7 +4,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Origami.Utils;
+namespace OrigamiUI;
 
 public static class PaperId
 {

@@ -1,16 +1,18 @@
 ﻿using System.Collections.Concurrent;
 using System.Drawing;
 
-using Origami.Components;
-using Origami.Utils;
-
 using Prowl.PaperUI;
 
-namespace Origami;
+namespace OrigamiUI;
 
 public interface IComponent
 {
-    public void ResetComponent();
+    // public void ResetComponent();
+}
+
+public interface IPersistentState
+{
+    public void Reset();
 }
 
 public abstract class Component<T>  : IComponent
@@ -23,11 +25,11 @@ public abstract class Component<T>  : IComponent
         return OnCreated();
     }
 
+    public ElementBuilder Escape() => ElementBuilder;
     public abstract void Finish();
 
     protected abstract T OnCreated();
     public abstract T Draw();
-    public abstract void ResetComponent();
 }
 
 public abstract class PersistentComponent
@@ -62,6 +64,7 @@ public static class Origami
 
         RegisterComponent<Button>();
         RegisterComponent<AccordianItem>();
+        RegisterComponent<Dropdown>();
     }
 
     public static void RegisterComponent<T>(int poolSizeLimit = 128) where T : IComponent, new()
@@ -91,11 +94,12 @@ public static class Origami
     {
         foreach (Type key in IndexStorage.Keys)
         {
+            if (!key.IsAssignableTo(typeof(IPersistentState))) continue;
             if (NumberRenderedLastFrame[key] > IndexStorage[key])
             {
                 for (int i = IndexStorage[key]; i < NumberRenderedLastFrame[key]; i++)
                 {
-                    ComponentPool[key][i].ResetComponent();
+                    ((IPersistentState)ComponentPool[key][i]).Reset();
                 }
             }
 
@@ -124,12 +128,12 @@ public static class Origami
             IdStorage[typeof(T)].Add(0);
         }
 
-        var newComponent = ((T)componentList[index]);
+        var newComponent = (T)componentList[index];
         newComponent.Create();
 
         if(IdStorage[typeof(T)][index] != newComponent.ElementBuilder._element.ID)
         {
-            newComponent.ResetComponent();
+            if(typeof(T).IsAssignableTo(typeof(IPersistentState))) ((IPersistentState)newComponent).Reset();
             IdStorage[typeof(T)][index] = newComponent.ElementBuilder._element.ID;
         }
 
