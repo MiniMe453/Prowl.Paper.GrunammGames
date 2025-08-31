@@ -1151,6 +1151,7 @@ namespace Shared
                     .Radius(Rounding.None)
                     .Text("Change button color")
                     .Color(Colors.Light)
+                    .Radius(Rounding.Medium)
                     .DrawDefault();
 
                 Origami.Component<Dropdown>("Dropdown 01")
