@@ -7,7 +7,7 @@ using Prowl.PaperUI.LayoutEngine;
 namespace OrigamiUI;
 
 
-public class Button : Component<Button>, IPersistentState
+public class Button : Component<Button>
 {
     public bool IsWhiteButton = false;
     public override ElementBuilder DrawDefault() => ElementBuilder;
@@ -102,6 +102,4 @@ public class Button : Component<Button>, IPersistentState
         ElementBuilder.Height(unit);
         return this;
     }
-
-    public void Reset() => IsWhiteButton = false;
 }

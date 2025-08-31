@@ -1140,90 +1140,90 @@ namespace Shared
                     .Width(150)
                     .Height(50);
 
-                Origami.Component<OrigamiUI.Button>("Test test modal 02")
-                    .Radius(Rounding.None)
-                    .Text("Open Modal")
-                    .Color(Colors.Light)
-                    .OnClick(e => modalVisible = !modalVisible)
-                    .DrawDefault();
-
-                Origami.Component<OrigamiUI.Button>("Test Button 02")
-                    .Radius(Rounding.None)
-                    .Text("Change button color")
-                    .Color(Colors.Light)
-                    .Radius(Rounding.Medium)
-                    .DrawDefault();
-
-                Origami.Component<Dropdown>("Dropdown 01")
-                    .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
-                    .DisplayValue(testValues[selectedIndex])
-                    .Width(250)
-                    .Height(40)
-                    .DrawDefault();
-
-                using (Origami.Component<Dropdown>("Dropdown 02")
-                           .Width(250)
-                           .Height(40)
-                           .DisplayValue(testValues[selectedIndex])
-                           .ContentBox()
-                           .Enter())
-                {
-                    Gui.Box("InputField")
-                        .BackgroundColor(Color.DarkGray)
-                        .Text("Custom search bar here")
-                        .Alignment(TextAlignment.MiddleLeft)
-                        .Height(35)
-                        .Margin(5)
-                        .Rounded(5);
-
-                    for (int i = 0; i < testValues.Length; i++)
-                    {
-                        Gui.Box("Item", i)
-                            .Text(testValues[i] + "HEHEHE")
-                            .Alignment(TextAlignment.MiddleCenter)
-                            .Height(35);
-                    }
-                }
-
-                using (Origami.Component<Modal>("TestModal")
-                           .SetVisibility(modalVisible)
-                           .DrawDefault()
-                           .Enter())
-                {
-                    using (Gui.Column("ModalColumn").Enter())
-                    {
-                        Origami.Component<Dropdown>("Dropdown 01")
-                            .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
-                            .DisplayValue(testValues[selectedIndex])
-                            .Width(250)
-                            .Height(40)
-                            .DrawDefault();
-
-                        Gui.Box("InputField")
-                            .BackgroundColor(Color.DarkGray)
-                            .Text("Custom search bar here")
-                            .Alignment(TextAlignment.MiddleLeft)
-                            .Height(35)
-                            .Margin(5)
-                            .Rounded(5);
-
-                        for (int i = 0; i < 3; i++)
-                        {
-                            Gui.Box("Item", i)
-                                .Text(testValues[i] + "HEHEHE")
-                                .Alignment(TextAlignment.MiddleCenter)
-                                .Height(35);
-                        }
-
-                        Origami.Component<OrigamiUI.Button>("Close Modal")
-                            .Radius(Rounding.Full)
-                            .Height(35)
-                            .Text("Close Modal")
-                            .Color(Colors.Light)
-                            .OnClick(e => modalVisible = false)
-                            .DrawDefault();
-                    }
-                }
+                // Origami.Component<OrigamiUI.Button>("Test test modal 02")
+                //     .Radius(Rounding.None)
+                //     .Text("Open Modal")
+                //     .Color(Colors.Light)
+                //     .OnClick(e => modalVisible = !modalVisible)
+                //     .DrawDefault();
+                //
+                // Origami.Component<OrigamiUI.Button>("Test Button 02")
+                //     .Radius(Rounding.None)
+                //     .Text("Change button color")
+                //     .Color(Colors.Light)
+                //     .Radius(Rounding.Medium)
+                //     .DrawDefault();
+                //
+                // Origami.Component<Dropdown>("Dropdown 01")
+                //     .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
+                //     .DisplayValue(testValues[selectedIndex])
+                //     .Width(250)
+                //     .Height(40)
+                //     .DrawDefault();
+                //
+                // using (Origami.Component<Dropdown>("Dropdown 02")
+                //            .Width(250)
+                //            .Height(40)
+                //            .DisplayValue(testValues[selectedIndex])
+                //            .ContentBox()
+                //            .Enter())
+                // {
+                //     Gui.Box("InputField")
+                //         .BackgroundColor(Color.DarkGray)
+                //         .Text("Custom search bar here")
+                //         .Alignment(TextAlignment.MiddleLeft)
+                //         .Height(35)
+                //         .Margin(5)
+                //         .Rounded(5);
+                //
+                //     for (int i = 0; i < testValues.Length; i++)
+                //     {
+                //         Gui.Box("Item", i)
+                //             .Text(testValues[i] + "HEHEHE")
+                //             .Alignment(TextAlignment.MiddleCenter)
+                //             .Height(35);
+                //     }
+                // }
+                //
+                // using (Origami.Component<Modal>("TestModal")
+                //            .SetVisibility(modalVisible)
+                //            .DrawDefault()
+                //            .Enter())
+                // {
+                //     using (Gui.Column("ModalColumn").Enter())
+                //     {
+                //         Origami.Component<Dropdown>("Dropdown 01")
+                //             .SetValues(testValues.ToList() , idx => selectedIndex = idx, selectedIndex)
+                //             .DisplayValue(testValues[selectedIndex])
+                //             .Width(250)
+                //             .Height(40)
+                //             .DrawDefault();
+                //
+                //         Gui.Box("InputField")
+                //             .BackgroundColor(Color.DarkGray)
+                //             .Text("Custom search bar here")
+                //             .Alignment(TextAlignment.MiddleLeft)
+                //             .Height(35)
+                //             .Margin(5)
+                //             .Rounded(5);
+                //
+                //         for (int i = 0; i < 3; i++)
+                //         {
+                //             Gui.Box("Item", i)
+                //                 .Text(testValues[i] + "HEHEHE")
+                //                 .Alignment(TextAlignment.MiddleCenter)
+                //                 .Height(35);
+                //         }
+                //
+                //         Origami.Component<OrigamiUI.Button>("Close Modal")
+                //             .Radius(Rounding.Full)
+                //             .Height(35)
+                //             .Text("Close Modal")
+                //             .Color(Colors.Light)
+                //             .OnClick(e => modalVisible = false)
+                //             .DrawDefault();
+                //     }
+                // }
                 //TODO This causes problems because of the automatic ID assignment. Need to solve that.
                 // Somehow we need to generate static ideas. The automatic ID generation needs to function
                 // On a parent basis, rather than another system.

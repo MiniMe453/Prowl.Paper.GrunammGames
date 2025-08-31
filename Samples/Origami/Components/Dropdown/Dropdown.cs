@@ -15,7 +15,7 @@ public enum DropdownFlags
 
 }
 
-public class Dropdown : Component<Dropdown>, IPersistentState
+public class Dropdown : Component<Dropdown>
 {
     private Action<int> _onItemSelected;
     private int _selectedIdx;
@@ -158,13 +158,13 @@ public class Dropdown : Component<Dropdown>, IPersistentState
         return this;
     }
 
-    public void Reset()
-    {
-        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
-        _onItemSelected = null;
-        _selectedIdx = 0;
-        _values.Clear();
-        _displayValue = "";
-        Origami.Gui.SetElementStorage(ElementBuilder._element, USE_SIMPLE_DROPDOWN, false);
-    }
+    // public void Reset()
+    // {
+    //     Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
+    //     _onItemSelected = null;
+    //     _selectedIdx = 0;
+    //     _values.Clear();
+    //     _displayValue = "";
+    //     Origami.Gui.SetElementStorage(ElementBuilder._element, USE_SIMPLE_DROPDOWN, false);
+    // }
 }
