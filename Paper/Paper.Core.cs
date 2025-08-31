@@ -179,6 +179,8 @@ namespace Prowl.PaperUI
             EndInputFrame();
 
             // Cleanup
+            EndOfFrameCleanupStyles(_createdElements);
+            EndOfFrameCleanupStorage();
             OfOfFrameCleanupStyles(_createdElements);
             UnitValue.Free();
 
@@ -619,6 +621,19 @@ namespace Prowl.PaperUI
                 _storage[el.ID] = storage = [];
 
             storage[key] = value;
+        }
+
+        private void EndOfFrameCleanupStorage()
+        {
+            var keys = _storage.Keys.ToArray();
+            foreach (var storedID in keys)
+            {
+                if (_createdElements.ContainsKey(storedID))
+                    continue;
+
+                // We didnt create this element this frame, so it no longer exists, delete any storage for it.
+                _storage.Remove(storedID);
+            }
         }
 
         #region Text Field Storage Helpers
