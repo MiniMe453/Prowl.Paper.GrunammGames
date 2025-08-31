@@ -1140,11 +1140,17 @@ namespace Shared
                     .Width(150)
                     .Height(50);
 
-                Origami.Component<OrigamiUI.Button>("Test Button 02")
+                Origami.Component<OrigamiUI.Button>("Test test modal 02")
                     .Radius(Rounding.None)
-                    .Text("Hello World")
+                    .Text("Open Modal")
                     .Color(Colors.Light)
                     .OnClick(e => modalVisible = !modalVisible)
+                    .DrawDefault();
+
+                Origami.Component<OrigamiUI.Button>("Test Button 02")
+                    .Radius(Rounding.None)
+                    .Text("Change button color")
+                    .Color(Colors.Light)
                     .DrawDefault();
 
                 Origami.Component<Dropdown>("Dropdown 01")

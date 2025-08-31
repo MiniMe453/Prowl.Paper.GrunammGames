@@ -98,19 +98,19 @@ public static class Origami
 
     public static void EndFrame()
     {
-        foreach (Type key in IndexStorage.Keys)
-        {
-            if (!key.IsAssignableTo(typeof(IPersistentState))) continue;
-            if (NumberRenderedLastFrame[key] > IndexStorage[key])
-            {
-                for (int i = IndexStorage[key]; i < NumberRenderedLastFrame[key]; i++)
-                {
-                    ((IPersistentState)ComponentPool[key][i]).Reset();
-                }
-            }
-
-            NumberRenderedLastFrame[key] = IndexStorage[key];
-        }
+        // foreach (Type key in IndexStorage.Keys)
+        // {
+        //     if (!key.IsAssignableTo(typeof(IPersistentState))) continue;
+        //     if (NumberRenderedLastFrame[key] > IndexStorage[key])
+        //     {
+        //         for (int i = IndexStorage[key]; i < NumberRenderedLastFrame[key]; i++)
+        //         {
+        //             ((IPersistentState)ComponentPool[key][i]).Reset();
+        //         }
+        //     }
+        //
+        //     NumberRenderedLastFrame[key] = IndexStorage[key];
+        // }
     }
 
     public static T Component<T>(string id) where T : Component<T>, new()
@@ -131,19 +131,10 @@ public static class Origami
         if (index >= ComponentPool[typeof(T)].Count)
         {
             ComponentPool[typeof(T)].Add(Constructors[typeof(T)]());
-            IdStorage[typeof(T)].Add(0);
+            // IdStorage[typeof(T)].Add(0);
         }
 
-        var newComponent = (T)componentList[index];
-        newComponent.Create(id);
-
-        if(IdStorage[typeof(T)][index] != newComponent.ElementBuilder._element.ID)
-        {
-            if(typeof(T).IsAssignableTo(typeof(IPersistentState))) ((IPersistentState)newComponent).Reset();
-            IdStorage[typeof(T)][index] = newComponent.ElementBuilder._element.ID;
-        }
-
-        return newComponent;
+        return ((T)componentList[index]).Create(id);
     }
 
     public static void SetPoolSizeLimit<T>(int size) where T : Component<T>
@@ -160,11 +151,5 @@ public static class Origami
         if (!ComponentPool.TryGetValue(typeof(T), out var createdComponents))
             throw new InvalidOperationException($"Component {typeof(T)} is not registered.");
         return createdComponents.Count;
-    }
-
-    public static void ReturnToPool<T>(T component)  where T : Component<T>
-    {
-        // component.ResetComponent();
-        // ComponentPool[typeof(T)].Enqueue(component);
     }
 }

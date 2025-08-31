@@ -11,9 +11,11 @@ public class Button : Component<Button>, IPersistentState
 {
     public bool IsWhiteButton = false;
     public override ElementBuilder DrawDefault() => ElementBuilder;
+    public const string IS_WHITE_BUTTON_KEY = "IsWhiteButton";
     private void OnClickEvent(ClickEvent e)
     {
-        IsWhiteButton = !IsWhiteButton;
+        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_WHITE_BUTTON_KEY, !Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_WHITE_BUTTON_KEY));
+        // IsWhiteButton = !IsWhiteButton;
     }
 
 
@@ -21,7 +23,11 @@ public class Button : Component<Button>, IPersistentState
     //TODO if the user tries to access the state here, it will fail.
     protected override Button OnCreated()
     {
-        ElementBuilder.BorderWidth(1).BorderColor(System.Drawing.Color.Chartreuse).Margin(5);
+        ElementBuilder.BorderWidth(1).BorderColor(System.Drawing.Color.Chartreuse).Margin(5)
+            .OnClick(OnClickEvent);
+
+        if (!Origami.Gui.HasElementStorage(ElementBuilder._element, IS_WHITE_BUTTON_KEY))
+            Origami.Gui.SetElementStorage(ElementBuilder._element, IS_WHITE_BUTTON_KEY, false);
         return this;
     }
 
@@ -39,7 +45,7 @@ public class Button : Component<Button>, IPersistentState
     public Button Color(Colors color)
     {
         //TODO this should define the color, then we define the variant using a different function
-        ElementBuilder.BackgroundColor(IsWhiteButton? System.Drawing.Color.Aqua : System.Drawing.Color.DimGray);
+        ElementBuilder.BackgroundColor(Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_WHITE_BUTTON_KEY)? System.Drawing.Color.Aqua : System.Drawing.Color.DimGray);
         return this;
     }
     public Button Radius(Rounding rounding)
