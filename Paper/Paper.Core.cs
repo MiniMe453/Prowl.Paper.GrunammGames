@@ -496,6 +496,10 @@ namespace Prowl.PaperUI
                 throw new Exception("Element already exists with this ID: " + stringID + ":" + intID + " = " + storageHash + " Parent: " + CurrentParent.ID + "\nPlease use a different ID.");
 
             // var builder = new ElementBuilder(this, storageHash);
+            //This works without creating multiple element builders per frame.
+            //We only have a single element builder that works for all GUI elements in the project.
+            //Yay :)
+            //TODO remove the list of element builders
             ElementBuilder builder;
             if (_currentBuilderIndex >= _builderPool.Count)
             {
