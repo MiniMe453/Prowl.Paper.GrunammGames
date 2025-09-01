@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Runtime.CompilerServices;
 
 using Prowl.PaperUI.LayoutEngine;
+using Prowl.PaperUI.Utilities;
 using Prowl.Quill;
 using Prowl.Vector;
 using Prowl.Scribe;
@@ -47,6 +48,9 @@ namespace Prowl.PaperUI
         /// </summary>
         public LayoutEngine.Element CurrentParent => _elementStack.Peek();
 
+        // private ObjectPool<ElementBuilder> _builderPool = new ObjectPool<ElementBuilder>();
+        private List<ElementBuilder> _builderPool = new();
+        private int _currentBuilderIndex = 0;
         #endregion
 
         #region Initialization and Frame Management
@@ -181,8 +185,7 @@ namespace Prowl.PaperUI
             // Cleanup
             EndOfFrameCleanupStyles(_createdElements);
             EndOfFrameCleanupStorage();
-            OfOfFrameCleanupStyles(_createdElements);
-            UnitValue.Free();
+            EndOfFramePoolCleanup();
 
             // Performance measurement
             _timer.Stop();
@@ -496,7 +499,14 @@ namespace Prowl.PaperUI
             if (_createdElements.ContainsKey(storageHash))
                 throw new Exception("Element already exists with this ID: " + stringID + ":" + intID + " = " + storageHash + " Parent: " + CurrentParent.ID + "\nPlease use a different ID.");
 
-            var builder = new ElementBuilder(this, storageHash);
+            // var builder = new ElementBuilder(this, storageHash);
+            ElementBuilder builder;
+            if (_currentBuilderIndex >= _builderPool.Count)
+            {
+                builder = new ElementBuilder(this, storageHash);
+                _builderPool.Add(builder);
+            }
+            else builder = _builderPool[_currentBuilderIndex].RemoveFromPool(this, storageHash);
             _createdElements.Add(storageHash, builder._element);
 
             AddChild(builder._element);
@@ -563,6 +573,12 @@ namespace Prowl.PaperUI
         }
 
         #endregion
+
+        private void EndOfFramePoolCleanup()
+        {
+            UnitValue.Free();
+            _currentBuilderIndex = 0;
+        }
 
         #region ID Stack Management
 

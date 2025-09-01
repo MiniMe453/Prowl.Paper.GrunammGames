@@ -33,7 +33,7 @@ namespace Shared
             }
 
             // Load System Font as Backups
-            gui.LoadSystemFonts("Arial", "Segoe UI", "Liberation Sans", "Consolas", "Menlo", "Liberation Mono");
+            //gui.LoadSystemFonts("Arial", "Segoe UI", "Liberation Sans", "Consolas", "Menlo", "Liberation Mono");
         }
     }
 }
