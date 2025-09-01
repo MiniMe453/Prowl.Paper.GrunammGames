@@ -23,6 +23,11 @@ namespace Prowl.PaperUI
             _element = element;
         }
 
+        protected void RemoveFromPool(Element element)
+        {
+            _element = element;
+        }
+
         public abstract T SetStyleProperty(GuiProp property, object value);
 
         // Shared implementation methods
@@ -548,6 +553,12 @@ namespace Prowl.PaperUI
         public ElementBuilder(Paper paper, ulong storageHash) : base(new Element { Owner = paper, ID = storageHash })
         {
             _paper = paper;
+        }
+
+        public ElementBuilder RemoveFromPool(Paper paper, ulong storageHash)
+        {
+            base.RemoveFromPool(new Element { Owner = paper, ID = storageHash });
+            return this;
         }
 
         public override ElementBuilder SetStyleProperty(GuiProp property, object value)
