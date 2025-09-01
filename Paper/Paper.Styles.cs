@@ -293,6 +293,12 @@ internal class ElementStyle
 {
     #region Nested Types
 
+    private interface IInterpolationState
+    {
+        GuiProp Property { get; }
+        bool Update(double deltaTime, ref GuiProperties currentValue, List<GuiProp> completedInterpolations);
+    }
+
     /// <summary>
     ///     Helper class to track interpolation state.
     /// </summary>
@@ -301,13 +307,29 @@ internal class ElementStyle
     /// Dictionary.
     /// I think a generic struct to store the information would be best, then we can just have a single object that
     /// we can collect all of our style type information from.
-    private class InterpolationState
+    private class InterpolationState<T> : IInterpolationState
     {
-        public object StartValue { get; set; }
-        public object TargetValue { get; set; }
+        public GuiProp Property { get; set; }
+        public T StartValue { get; set; }
+        public T TargetValue { get; set; }
         public double Duration { get; set; }
         public Func<double, double>? EasingFunction { get; set; }
         public double CurrentTime { get; set; }
+
+        public bool Update(double deltaTime, ref GuiProperties currentValue, List<GuiProp> completedInterpolations)
+        {
+            CurrentTime += deltaTime;
+            double t = Math.Min(1.0, CurrentTime / Duration);
+            if (EasingFunction != null) t = EasingFunction(t);
+
+            StyleUtils.SetValueInStruct(Property, ref currentValue, StyleUtils.Interpolate(StartValue, TargetValue, t));
+
+            if (CurrentTime >= Duration)
+            {
+                return true; // complete
+            }
+            return false;
+        }
     }
 
     #endregion
@@ -318,53 +340,20 @@ internal class ElementStyle
     private GuiProperties _currentGuiValues = new();
     private GuiProperties _targetGuiValues = new();
 
-    private readonly Dictionary<GuiProp, Color> _colorProperties = new();
-    private readonly Dictionary<GuiProp, Gradient> _gradientProperties = new();
-    private readonly Dictionary<GuiProp, double> _doubleProperties = new();
-    private readonly Dictionary<GuiProp, Vector4> _vector4Properties = new();
-    private readonly Dictionary<GuiProp, BoxShadow> _boxShadowProperties = new();
-    private readonly Dictionary<GuiProp, UnitValue> _unitValueProperties = new();
-    private readonly Dictionary<GuiProp, int> _intProperties = new();
-    private readonly Dictionary<GuiProp, float> _floatProperties = new();
-    private readonly Dictionary<GuiProp, Transform2D> _transform2DProperties = new();
-
-    private readonly Dictionary<GuiProp, Color> _colorTargetProps = new();
-    private readonly Dictionary<GuiProp, Gradient> _gradientTargetProps = new();
-    private readonly Dictionary<GuiProp, double> _doubleTargetProps = new();
-    private readonly Dictionary<GuiProp, Vector4> _vector4TargetProps = new();
-    private readonly Dictionary<GuiProp, BoxShadow> _boxShadowTargetProps = new();
-    private readonly Dictionary<GuiProp, UnitValue> _unitValueTargetProps = new();
-    private readonly Dictionary<GuiProp, int> _intTargetProps = new();
-    private readonly Dictionary<GuiProp, float> _floatTargetProps = new();
-    private readonly Dictionary<GuiProp, Transform2D> _transform2DTargetProps = new();
-
-    // public Color GetColorValue(GuiProp property)
-    // {
-    //     // If we have the value, return it
-    //     if (_colorProperties.TryGetValue(property, out var value))
-    //         return value;
-    //
-    //     // Otherwise check parent
-    //     if (_parent != null)
-    //         return _parent.GetColorValue(property);
-    //
-    //     // Otherwise return default
-    //     return DefaultStyleValues.Get<Color>(property);
-    // }
-
-
     // State tracking
     private readonly HashSet<GuiProp> _propertiesSetThisFrame = new();
     private readonly HashSet<GuiProp> _propertiesWithTransitions = new();
     private bool _firstFrame = true;
 
     // Property values
-    private readonly HashSet<GuiProp> _currentValues = new();
-    private readonly HashSet<GuiProp> _targetValues = new();
+    private HashSet<GuiProp> _currentValues = new();
+    private HashSet<GuiProp> _targetValues = new();
 
     // Transition state
     private readonly Dictionary<GuiProp, TransitionConfig> _transitionConfigs = new();
-    private readonly Dictionary<GuiProp, InterpolationState> _interpolations = new();
+    private readonly Dictionary<GuiProp, IInterpolationState> _interpolations = new();
+
+    // private readonly Dictionary<GuiProp, InterpolationState> _interpolations = new();
 
     // Inheritance
     private ElementStyle? _parent;
@@ -383,7 +372,9 @@ internal class ElementStyle
         _currentValues.Clear();
 
         _currentGuiValues.SetDefaultValues();
-        _targetGuiValues.SetDefaultValues();;
+        _targetGuiValues.SetDefaultValues();
+
+        _interpolations.Clear();
     }
 
     /// <summary>
@@ -437,7 +428,7 @@ internal class ElementStyle
         StyleUtils.SetValueInStruct(property, ref _targetGuiValues, value);
         _currentValues.Add(property);
         _targetValues.Add(property); // Ensure target matches current
-        _interpolations.Remove(property); // Remove any existing interpolation state
+        RemoveInterpolation(property);
     }
 
     /// <summary>
@@ -446,7 +437,7 @@ internal class ElementStyle
     public void SetNextValue<T>(GuiProp property, T value)
     {
         _propertiesSetThisFrame.Add(property);
-        _targetValues.Add(property);
+        // _targetValues.Add(property);
         // Store the target value - this is where we want to end up
         StyleUtils.SetValueInStruct(property, ref _targetGuiValues, value);
         _targetValues.Add(property);
@@ -472,7 +463,7 @@ internal class ElementStyle
         _currentValues.Remove(property);
         _targetValues.Remove(property);
         _transitionConfigs.Remove(property);
-        _interpolations.Remove(property);
+        RemoveInterpolation(property);
     }
 
     /// <summary>
@@ -489,6 +480,7 @@ internal class ElementStyle
         // Track completed transitions for cleanup
         List<GuiProp> completedInterpolations = new();
 
+        _currentValues = _targetValues;
         // Process all properties that have target values
         foreach (GuiProp property in _targetValues)
         {
@@ -539,11 +531,16 @@ internal class ElementStyle
         // Clean up completed interpolations
         foreach (GuiProp property in completedInterpolations)
         {
-            _interpolations.Remove(property);
+            RemoveInterpolation(property);
         }
 
         // Clear transition configs after processing - they don't persist across frames
         _transitionConfigs.Clear();
+    }
+
+    private void RemoveInterpolation(GuiProp property)
+    {
+        _interpolations.Remove(property);
     }
 
     private void ProcessPropertyForAnimation<T>(GuiProp property, double deltaTime,
@@ -749,11 +746,17 @@ internal class ElementStyle
             return;
         }
 
+        HandleInterpolationState(property, currentValue, targetValue, config, deltaTime, completedInterpolations);
+    }
+
+    private void HandleInterpolationState<T>(GuiProp property, T currentValue, T targetValue, TransitionConfig config, double deltaTime, List<GuiProp> completedInterpolations)
+    {
         // Create or update interpolation state
-        if (!_interpolations.TryGetValue(property, out InterpolationState? state))
+        if (!_interpolations.TryGetValue(property, out IInterpolationState? state))
         {
-            state = new InterpolationState
+            state = new InterpolationState<T>
             {
+                Property = property,
                 StartValue = currentValue,
                 TargetValue = targetValue,
                 Duration = config.Duration,
@@ -762,136 +765,25 @@ internal class ElementStyle
             };
             _interpolations[property] = state;
         }
-        else if (!state.TargetValue.Equals(targetValue))
+
+        InterpolationState<T> stateConverted = Unsafe.As<IInterpolationState, InterpolationState<T>>(ref state);
+
+        if (!stateConverted.TargetValue.Equals(targetValue))
         {
             // Target has changed, restart interpolation
-            state.StartValue = currentValue;
-            state.TargetValue = targetValue;
-            state.Duration = config.Duration;
-            state.EasingFunction = config.EasingFunction;
-            state.CurrentTime = 0;
+            stateConverted.StartValue = currentValue;
+            stateConverted.TargetValue = targetValue;
+            stateConverted.Duration = config.Duration;
+            stateConverted.EasingFunction = config.EasingFunction;
+            stateConverted.CurrentTime = 0;
         }
 
         // Update the interpolation
-        state.CurrentTime += deltaTime;
+        stateConverted.CurrentTime += deltaTime;
 
-        if (state.CurrentTime >= state.Duration)
-        {
-            // Interpolation complete
-            StyleUtils.SetValueInStruct(property, ref _currentGuiValues, targetValue);
-            // _currentValues[property] = targetValue;
-            completedInterpolations.Add(property);
-        }
-        else
-        {
-            // Calculate interpolated value
-            double t = state.CurrentTime / state.Duration;
-            if (state.EasingFunction != null)
-            {
-                t = state.EasingFunction(t);
-            }
+        bool isFinished = stateConverted.Update(deltaTime, ref _currentGuiValues, completedInterpolations);
 
-            StyleUtils.SetValueInStruct(property, ref _currentGuiValues, Interpolate(state.StartValue, state.TargetValue, t));
-            // _currentValues[property] = Interpolate(state.StartValue, state.TargetValue, t);
-        }
-    }
-
-    /// <summary>
-    ///     Interpolates between two values based on their type.
-    /// </summary>
-    private T Interpolate<T>(T start, T end, double t)
-    {
-        if (typeof(T) == typeof(double))
-        {
-            double result = Unsafe.As<T, double>(ref start) +
-                            (Unsafe.As<T, double>(ref end) - Unsafe.As<T, double>(ref start)) * t;
-            return Unsafe.As<double, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(float))
-        {
-            float result = Unsafe.As<T, float>(ref start) +
-                           (Unsafe.As<T, float>(ref end) - Unsafe.As<T, float>(ref start)) * (float)t;
-            return Unsafe.As<float, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(int))
-        {
-            int result = Unsafe.As<T, int>(ref start) +
-                         (int)((Unsafe.As<T, int>(ref end) - Unsafe.As<T, int>(ref start)) * t);
-            return Unsafe.As<int, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(Color))
-        {
-            Color result = InterpolateColor(Unsafe.As<T, Color>(ref start), Unsafe.As<T, Color>(ref end), t);
-            return Unsafe.As<Color, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(Vector2))
-        {
-            Vector2 result = Vector2.Lerp(Unsafe.As<T, Vector2>(ref start), Unsafe.As<T, Vector2>(ref end), (float)t);
-            return Unsafe.As<Vector2, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(Vector3))
-        {
-            Vector3 result = Vector3.Lerp(Unsafe.As<T, Vector3>(ref start), Unsafe.As<T, Vector3>(ref end), (float)t);
-            return Unsafe.As<Vector3, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(Vector4))
-        {
-            Vector4 result = Vector4.Lerp(Unsafe.As<T, Vector4>(ref start), Unsafe.As<T, Vector4>(ref end), (float)t);
-            return Unsafe.As<Vector4, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(UnitValue))
-        {
-            UnitValue result = UnitValue.Lerp(Unsafe.As<T, UnitValue>(ref start), Unsafe.As<T, UnitValue>(ref end), t);
-            return Unsafe.As<UnitValue, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(Transform2D))
-        {
-            Transform2D result = Transform2D.Lerp(Unsafe.As<T, Transform2D>(ref start),
-                Unsafe.As<T, Transform2D>(ref end), t);
-            return Unsafe.As<Transform2D, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(string))
-        {
-            return t > 0.5 ? end : start;
-        }
-
-        if (typeof(T) == typeof(Gradient))
-        {
-            Gradient result = Gradient.Lerp(Unsafe.As<T, Gradient>(ref start), Unsafe.As<T, Gradient>(ref end), t);
-            return Unsafe.As<Gradient, T>(ref result);
-        }
-
-        if (typeof(T) == typeof(BoxShadow))
-        {
-            BoxShadow result = BoxShadow.Lerp(Unsafe.As<T, BoxShadow>(ref start), Unsafe.As<T, BoxShadow>(ref end), t);
-            return Unsafe.As<BoxShadow, T>(ref result);
-        }
-
-        // Default to just returning the end value if type is unknown
-        return end;
-    }
-
-
-    /// <summary>
-    ///     Interpolates between two colors.
-    /// </summary>
-    private Color InterpolateColor(Color start, Color end, double t)
-    {
-        int r = (int)(start.R + (end.R - start.R) * t);
-        int g = (int)(start.G + (end.G - start.G) * t);
-        int b = (int)(start.B + (end.B - start.B) * t);
-        int a = (int)(start.A + (end.A - start.A) * t);
-
-        return Color.FromArgb(a, r, g, b);
+        if (isFinished) completedInterpolations.Add(property);
     }
 
     /// <summary>

@@ -440,4 +440,102 @@ public static T GetValueFromStruct<T>(GuiProp property, GuiProperties propsStruc
                 throw new InvalidOperationException($"Unsupported property {property} or type {typeof(T)}.");
         }
     }
+
+        /// <summary>
+    ///     Interpolates between two values based on their type.
+    /// </summary>
+    public static T Interpolate<T>(T start, T end, double t)
+    {
+        if (typeof(T) == typeof(double))
+        {
+            double result = Unsafe.As<T, double>(ref start) +
+                            (Unsafe.As<T, double>(ref end) - Unsafe.As<T, double>(ref start)) * t;
+            return Unsafe.As<double, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(float))
+        {
+            float result = Unsafe.As<T, float>(ref start) +
+                           (Unsafe.As<T, float>(ref end) - Unsafe.As<T, float>(ref start)) * (float)t;
+            return Unsafe.As<float, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(int))
+        {
+            int result = Unsafe.As<T, int>(ref start) +
+                         (int)((Unsafe.As<T, int>(ref end) - Unsafe.As<T, int>(ref start)) * t);
+            return Unsafe.As<int, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(Color))
+        {
+            Color result = InterpolateColor(Unsafe.As<T, Color>(ref start), Unsafe.As<T, Color>(ref end), t);
+            return Unsafe.As<Color, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(Vector2))
+        {
+            Vector2 result = Vector2.Lerp(Unsafe.As<T, Vector2>(ref start), Unsafe.As<T, Vector2>(ref end), (float)t);
+            return Unsafe.As<Vector2, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(Vector3))
+        {
+            Vector3 result = Vector3.Lerp(Unsafe.As<T, Vector3>(ref start), Unsafe.As<T, Vector3>(ref end), (float)t);
+            return Unsafe.As<Vector3, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(Vector4))
+        {
+            Vector4 result = Vector4.Lerp(Unsafe.As<T, Vector4>(ref start), Unsafe.As<T, Vector4>(ref end), (float)t);
+            return Unsafe.As<Vector4, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(UnitValue))
+        {
+            UnitValue result = UnitValue.Lerp(Unsafe.As<T, UnitValue>(ref start), Unsafe.As<T, UnitValue>(ref end), t);
+            return Unsafe.As<UnitValue, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(Transform2D))
+        {
+            Transform2D result = Transform2D.Lerp(Unsafe.As<T, Transform2D>(ref start),
+                Unsafe.As<T, Transform2D>(ref end), t);
+            return Unsafe.As<Transform2D, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(string))
+        {
+            return t > 0.5 ? end : start;
+        }
+
+        if (typeof(T) == typeof(Gradient))
+        {
+            Gradient result = Gradient.Lerp(Unsafe.As<T, Gradient>(ref start), Unsafe.As<T, Gradient>(ref end), t);
+            return Unsafe.As<Gradient, T>(ref result);
+        }
+
+        if (typeof(T) == typeof(BoxShadow))
+        {
+            BoxShadow result = BoxShadow.Lerp(Unsafe.As<T, BoxShadow>(ref start), Unsafe.As<T, BoxShadow>(ref end), t);
+            return Unsafe.As<BoxShadow, T>(ref result);
+        }
+
+        // Default to just returning the end value if type is unknown
+        return end;
+    }
+
+
+    /// <summary>
+    ///     Interpolates between two colors.
+    /// </summary>
+    private static Color InterpolateColor(Color start, Color end, double t)
+    {
+        int r = (int)(start.R + (end.R - start.R) * t);
+        int g = (int)(start.G + (end.G - start.G) * t);
+        int b = (int)(start.B + (end.B - start.B) * t);
+        int a = (int)(start.A + (end.A - start.A) * t);
+
+        return Color.FromArgb(a, r, g, b);
+    }
 }
