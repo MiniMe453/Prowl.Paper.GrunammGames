@@ -47,10 +47,6 @@ namespace Prowl.PaperUI
         /// Gets the current parent element in the element hierarchy.
         /// </summary>
         public LayoutEngine.Element CurrentParent => _elementStack.Peek();
-
-        // private ObjectPool<ElementBuilder> _builderPool = new ObjectPool<ElementBuilder>();
-        private List<ElementBuilder> _builderPool = new();
-        private int _currentBuilderIndex = 0;
         #endregion
 
         #region Initialization and Frame Management
@@ -573,12 +569,6 @@ namespace Prowl.PaperUI
         }
 
         #endregion
-
-        private void EndOfFramePoolCleanup()
-        {
-            UnitValue.Free();
-            _currentBuilderIndex = 0;
-        }
 
         #region ID Stack Management
 

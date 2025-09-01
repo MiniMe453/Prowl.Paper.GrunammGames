@@ -67,7 +67,7 @@ namespace Prowl.PaperUI.LayoutEngine
 
         // Rendering
         internal List<ElementRenderCommand>? _renderCommands = null;
-        internal ElementStyle _elementStyle = new();
+        internal ElementStyle _elementStyle;
         internal bool _scissorEnabled = false;
 
         internal Layer Layer = Layer.Base;
@@ -84,6 +84,11 @@ namespace Prowl.PaperUI.LayoutEngine
 
         // Content sizing for auto-sized elements
         internal Func<double?, double?, (double, double)?> ContentSizer { get; set; }
+
+        internal void RemoveFromPool()
+        {
+
+        }
 
         internal void AddRenderElement(ElementRenderCommand element)
         {
@@ -211,13 +216,13 @@ namespace Prowl.PaperUI.LayoutEngine
                 case TextAlignment.MiddleRight:
                     yOffset = (availableHeight - textSize.y) / 2.0;
                     break;
-                    
+
                 case TextAlignment.BottomLeft:
                 case TextAlignment.BottomCenter:
                 case TextAlignment.BottomRight:
                     yOffset = availableHeight - textSize.y;
                     break;
-                    
+
                 case TextAlignment.Left:
                 case TextAlignment.Center:
                 case TextAlignment.Right:
