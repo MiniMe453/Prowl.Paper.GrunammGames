@@ -550,14 +550,14 @@ namespace Prowl.PaperUI
         /// <summary>Style properties applied when the element has focus.</summary>
         public StateDrivenStyle Focused => StateDrivenStyle.Get(this, _paper.IsElementFocused(_element.ID));
 
-        public ElementBuilder(Paper paper, ulong storageHash) : base(new Element { Owner = paper, ID = storageHash })
+        public ElementBuilder(Paper paper, ulong storageHash) : base(new Element(paper) { Owner = paper, ID = storageHash })
         {
             _paper = paper;
         }
 
-        public ElementBuilder RemoveFromPool(Paper paper, ulong storageHash)
+        public ElementBuilder SetElement(Paper paper, ulong storageHash)
         {
-            base.RemoveFromPool(new Element { Owner = paper, ID = storageHash });
+            base.RemoveFromPool(new Element(paper) { Owner = paper, ID = storageHash });
             return this;
         }
 

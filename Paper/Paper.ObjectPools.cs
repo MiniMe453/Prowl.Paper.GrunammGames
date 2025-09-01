@@ -14,18 +14,21 @@ public partial class Paper
     private List<ElementStyle> _stylePool = new();
     private int _currentStyleIndex;
 
-    public ElementStyle GetStyleFromPool()
+    internal ElementStyle GetStyleFromPool()
     {
         ElementStyle style;
         if (_currentStyleIndex >= _stylePool.Count)
         {
             style = new ElementStyle();
+            _stylePool.Add(style);
         }
         else
         {
             style = _stylePool[_currentStyleIndex];
         }
 
+        _currentStyleIndex++;
+        style.RemoveFromPool();
         return style;
     }
 
@@ -33,5 +36,6 @@ public partial class Paper
     {
         UnitValue.Free();
         _currentBuilderIndex = 0;
+        _currentStyleIndex = 0;
     }
 }

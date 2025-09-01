@@ -292,6 +292,20 @@ namespace Prowl.PaperUI
 
         #region Public Methods
 
+        public void RemoveFromPool()
+        {
+            _propertiesSetThisFrame.Clear();
+            _propertiesWithTransitions.Clear();
+
+            //TODO understand how this works better
+            _targetValues.Clear();
+
+            foreach (GuiProp key in _currentValues.Keys)
+            {
+                _currentValues[key] = GetDefaultValue(key);
+            }
+        }
+
         /// <summary>
         /// Marks the end of a frame, resetting per-frame state.
         /// </summary>

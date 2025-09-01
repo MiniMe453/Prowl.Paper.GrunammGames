@@ -85,6 +85,12 @@ namespace Prowl.PaperUI.LayoutEngine
         // Content sizing for auto-sized elements
         internal Func<double?, double?, (double, double)?> ContentSizer { get; set; }
 
+        public Element(Paper owner)
+        {
+            Owner = owner;
+            _elementStyle = Owner.GetStyleFromPool();
+        }
+
         internal void RemoveFromPool()
         {
 

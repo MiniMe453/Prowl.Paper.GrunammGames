@@ -9,14 +9,18 @@ using Prowl.Quill;
 using Prowl.Vector;
 using Prowl.Scribe;
 
+
 namespace Prowl.PaperUI
 {
+    //TODO refactor the storage to require a state class that gets passed in (or returned from
+    // an object pool of states. Reset it if we aren't using it anymore.
     public partial class Paper
     {
         #region Fields & Properties
 
         // Layout and hierarchy management
         private LayoutEngine.Element _rootElement;
+        private ElementBuilder _elementBuilder;
         internal Stack<LayoutEngine.Element> _elementStack = new Stack<LayoutEngine.Element>();
         private readonly Stack<ulong> _IDStack = new();
         private readonly Dictionary<ulong, Element> _createdElements = [];
@@ -65,7 +69,7 @@ namespace Prowl.PaperUI
             _renderer = renderer;
 
             // Create root element
-            _rootElement = new LayoutEngine.Element {
+            _rootElement = new LayoutEngine.Element(this) {
                 ID = 0
             };
             _rootElement._elementStyle.SetDirectValue(GuiProp.Width, UnitValue.Pixels(_width));
@@ -81,7 +85,7 @@ namespace Prowl.PaperUI
 
             // Create canvas
             _canvas = new Canvas(renderer, fontAtlas);
-
+            _elementBuilder = new ElementBuilder(this, 0);
             InitializeInput();
         }
 
@@ -122,7 +126,7 @@ namespace Prowl.PaperUI
             _elementStack.Clear();
 
             // Reset with just the root element
-            _rootElement = new LayoutEngine.Element {
+            _rootElement = new LayoutEngine.Element(this) {
                 ID = 0
             };
             _rootElement._elementStyle.SetDirectValue(GuiProp.Width, UnitValue.Pixels(_width));
@@ -506,7 +510,13 @@ namespace Prowl.PaperUI
                 builder = new ElementBuilder(this, storageHash);
                 _builderPool.Add(builder);
             }
-            else builder = _builderPool[_currentBuilderIndex].RemoveFromPool(this, storageHash);
+            else
+            {
+                builder = _builderPool[_currentBuilderIndex];
+            }
+
+            _currentBuilderIndex++;
+            builder.SetElement(this, storageHash);
             _createdElements.Add(storageHash, builder._element);
 
             AddChild(builder._element);
@@ -635,8 +645,7 @@ namespace Prowl.PaperUI
 
         private void EndOfFrameCleanupStorage()
         {
-            var keys = _storage.Keys.ToArray();
-            foreach (var storedID in keys)
+            foreach (var storedID in _storage.Keys)
             {
                 if (_createdElements.ContainsKey(storedID))
                     continue;
