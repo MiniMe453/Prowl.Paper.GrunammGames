@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Runtime.CompilerServices;
 
 using Prowl.PaperUI.Events;
 using Prowl.PaperUI.LayoutEngine;
@@ -11,7 +12,7 @@ namespace Prowl.PaperUI
 {
     public interface IStyleSetter<T> where T : IStyleSetter<T>
     {
-        T SetStyleProperty(GuiProp property, object value);
+        T SetStyleProperty<T2>(GuiProp property, T2 value);
     }
 
     public abstract class StyleSetterBase<T> : IStyleSetter<T> where T : StyleSetterBase<T>
@@ -28,61 +29,61 @@ namespace Prowl.PaperUI
             _element = element;
         }
 
-        public abstract T SetStyleProperty(GuiProp property, object value);
+        public abstract T SetStyleProperty<T2>(GuiProp property, T2 value);
 
         // Shared implementation methods
 
         #region Appearance Properties
 
         /// <summary>Sets the background color of the element.</summary>
-        public T BackgroundColor(Color color) => SetStyleProperty(GuiProp.BackgroundColor, color);
+        public T BackgroundColor(Color color) => SetStyleProperty<Color>(GuiProp.BackgroundColor, color);
 
         /// <summary>Sets a linear gradient background gradient.</summary>
         public T BackgroundLinearGradient(double x1, double y1, double x2, double y2, Color color1, Color color2) =>
-            SetStyleProperty(GuiProp.BackgroundGradient, Gradient.Linear(x1, y1, x2, y2, color1, color2));
+            SetStyleProperty<Gradient>(GuiProp.BackgroundGradient, Gradient.Linear(x1, y1, x2, y2, color1, color2));
 
         /// <summary>Sets a radial gradient background gradient.</summary>
         public T BackgroundRadialGradient(double centerX, double centerY, double innerRadius, double outerRadius, Color innerColor, Color outerColor) =>
-            SetStyleProperty(GuiProp.BackgroundGradient, Gradient.Radial(centerX, centerY, innerRadius, outerRadius, innerColor, outerColor));
+            SetStyleProperty<Gradient>(GuiProp.BackgroundGradient, Gradient.Radial(centerX, centerY, innerRadius, outerRadius, innerColor, outerColor));
 
         /// <summary>Sets a box gradient background gradient.</summary>
         public T BackgroundBoxGradient(double centerX, double centerY, double width, double height, float radius, float feather, Color innerColor, Color outerColor) =>
-            SetStyleProperty(GuiProp.BackgroundGradient, Gradient.Box(centerX, centerY, width, height, radius, feather, innerColor, outerColor));
+            SetStyleProperty<Gradient>(GuiProp.BackgroundGradient, Gradient.Box(centerX, centerY, width, height, radius, feather, innerColor, outerColor));
 
         /// <summary>Clears any background gradient on the element.</summary>
-        public T ClearBackgroundGradient() => SetStyleProperty(GuiProp.BackgroundGradient, Gradient.None);
+        public T ClearBackgroundGradient() => SetStyleProperty<Gradient>(GuiProp.BackgroundGradient, Gradient.None);
 
         /// <summary>Sets the border color of the element.</summary>
-        public T BorderColor(Color color) => SetStyleProperty(GuiProp.BorderColor, color);
+        public T BorderColor(Color color) => SetStyleProperty<Color>(GuiProp.BorderColor, color);
 
         /// <summary>Sets the border width of the element.</summary>
-        public T BorderWidth(double width) => SetStyleProperty(GuiProp.BorderWidth, width);
+        public T BorderWidth(double width) => SetStyleProperty<double>(GuiProp.BorderWidth, width);
 
         /// <summary>Sets a box shadow on the element.</summary>
         public T BoxShadow(double offsetX, double offsetY, double blur, double spread, Color color) =>
-            SetStyleProperty(GuiProp.BoxShadow, new BoxShadow(offsetX, offsetY, blur, spread, color));
+            SetStyleProperty<BoxShadow>(GuiProp.BoxShadow, new BoxShadow(offsetX, offsetY, blur, spread, color));
 
         /// <summary>Sets a box shadow on the element.</summary>
-        public T BoxShadow(BoxShadow shadow) => SetStyleProperty(GuiProp.BoxShadow, shadow);
+        public T BoxShadow(BoxShadow shadow) => SetStyleProperty<BoxShadow>(GuiProp.BoxShadow, shadow);
 
         #endregion
 
         #region Corner Rounding
 
         /// <summary>Rounds the top corners of the element.</summary>
-        public T RoundedTop(double radius) => SetStyleProperty(GuiProp.Rounded, new Vector4(radius, radius, 0, 0));
+        public T RoundedTop(double radius) => SetStyleProperty<Vector4>(GuiProp.Rounded, new Vector4(radius, radius, 0, 0));
 
         /// <summary>Rounds the bottom corners of the element.</summary>
-        public T RoundedBottom(double radius) => SetStyleProperty(GuiProp.Rounded, new Vector4(0, 0, radius, radius));
+        public T RoundedBottom(double radius) => SetStyleProperty<Vector4>(GuiProp.Rounded, new Vector4(0, 0, radius, radius));
 
         /// <summary>Rounds the left corners of the element.</summary>
-        public T RoundedLeft(double radius) => SetStyleProperty(GuiProp.Rounded, new Vector4(radius, 0, 0, radius));
+        public T RoundedLeft(double radius) => SetStyleProperty<Vector4>(GuiProp.Rounded, new Vector4(radius, 0, 0, radius));
 
         /// <summary>Rounds the right corners of the element.</summary>
-        public T RoundedRight(double radius) => SetStyleProperty(GuiProp.Rounded, new Vector4(0, radius, radius, 0));
+        public T RoundedRight(double radius) => SetStyleProperty<Vector4>(GuiProp.Rounded, new Vector4(0, radius, radius, 0));
 
         /// <summary>Rounds all corners of the element with the same radius.</summary>
-        public T Rounded(double radius) => SetStyleProperty(GuiProp.Rounded, new Vector4(radius, radius, radius, radius));
+        public T Rounded(double radius) => SetStyleProperty<Vector4>(GuiProp.Rounded, new Vector4(radius, radius, radius, radius));
 
         /// <summary>Rounds each corner of the element with individual radii.</summary>
         /// <param name="tlRadius">Top-left radius</param>
@@ -90,14 +91,14 @@ namespace Prowl.PaperUI
         /// <param name="brRadius">Bottom-right radius</param>
         /// <param name="blRadius">Bottom-left radius</param>
         public T Rounded(double tlRadius, double trRadius, double brRadius, double blRadius) =>
-            SetStyleProperty(GuiProp.Rounded, new Vector4(tlRadius, trRadius, brRadius, blRadius));
+            SetStyleProperty<Vector4>(GuiProp.Rounded, new Vector4(tlRadius, trRadius, brRadius, blRadius));
 
         #endregion
 
         #region Layout Properties
 
         /// <summary>Sets the aspect ratio (width/height) of the element.</summary>
-        public T AspectRatio(double ratio) => SetStyleProperty(GuiProp.AspectRatio, ratio);
+        public T AspectRatio(double ratio) => SetStyleProperty<double>(GuiProp.AspectRatio, ratio);
 
         /// <summary>Sets both width and height to the same value.</summary>
         public T Size(UnitValue sizeUniform) => Size(sizeUniform, sizeUniform);
@@ -105,70 +106,70 @@ namespace Prowl.PaperUI
         /// <summary>Sets the width and height of the element.</summary>
         public T Size(UnitValue width, UnitValue height)
         {
-            SetStyleProperty(GuiProp.Width, width);
-            return SetStyleProperty(GuiProp.Height, height);
+            SetStyleProperty<UnitValue>(GuiProp.Width, width);
+            return SetStyleProperty<UnitValue>(GuiProp.Height, height);
         }
 
         /// <summary>Sets the width of the element.</summary>
-        public T Width(UnitValue width) => SetStyleProperty(GuiProp.Width, width);
+        public T Width(UnitValue width) => SetStyleProperty<UnitValue>(GuiProp.Width, width);
 
         /// <summary>Sets the height of the element.</summary>
-        public T Height(UnitValue height) => SetStyleProperty(GuiProp.Height, height);
+        public T Height(UnitValue height) => SetStyleProperty<UnitValue>(GuiProp.Height, height);
 
         /// <summary>Sets the minimum width of the element.</summary>
-        public T MinWidth(UnitValue minWidth) => SetStyleProperty(GuiProp.MinWidth, minWidth);
+        public T MinWidth(UnitValue minWidth) => SetStyleProperty<UnitValue>(GuiProp.MinWidth, minWidth);
 
         /// <summary>Sets the maximum width of the element.</summary>
-        public T MaxWidth(UnitValue maxWidth) => SetStyleProperty(GuiProp.MaxWidth, maxWidth);
+        public T MaxWidth(UnitValue maxWidth) => SetStyleProperty<UnitValue>(GuiProp.MaxWidth, maxWidth);
 
         /// <summary>Sets the minimum height of the element.</summary>
-        public T MinHeight(UnitValue minHeight) => SetStyleProperty(GuiProp.MinHeight, minHeight);
+        public T MinHeight(UnitValue minHeight) => SetStyleProperty<UnitValue>(GuiProp.MinHeight, minHeight);
 
         /// <summary>Sets the maximum height of the element.</summary>
-        public T MaxHeight(UnitValue maxHeight) => SetStyleProperty(GuiProp.MaxHeight, maxHeight);
+        public T MaxHeight(UnitValue maxHeight) => SetStyleProperty<UnitValue>(GuiProp.MaxHeight, maxHeight);
 
         /// <summary>Sets the position of the element from the left and top edges.</summary>
         public T Position(UnitValue left, UnitValue top)
         {
-            SetStyleProperty(GuiProp.Left, left);
-            return SetStyleProperty(GuiProp.Top, top);
+            SetStyleProperty<UnitValue>(GuiProp.Left, left);
+            return SetStyleProperty<UnitValue>(GuiProp.Top, top);
         }
 
         /// <summary>Sets the left position of the element.</summary>
-        public T Left(UnitValue left) => SetStyleProperty(GuiProp.Left, left);
+        public T Left(UnitValue left) => SetStyleProperty<UnitValue>(GuiProp.Left, left);
 
         /// <summary>Sets the right position of the element.</summary>
-        public T Right(UnitValue right) => SetStyleProperty(GuiProp.Right, right);
+        public T Right(UnitValue right) => SetStyleProperty<UnitValue>(GuiProp.Right, right);
 
         /// <summary>Sets the top position of the element.</summary>
-        public T Top(UnitValue top) => SetStyleProperty(GuiProp.Top, top);
+        public T Top(UnitValue top) => SetStyleProperty<UnitValue>(GuiProp.Top, top);
 
         /// <summary>Sets the bottom position of the element.</summary>
-        public T Bottom(UnitValue bottom) => SetStyleProperty(GuiProp.Bottom, bottom);
+        public T Bottom(UnitValue bottom) => SetStyleProperty<UnitValue>(GuiProp.Bottom, bottom);
 
         /// <summary>Sets the minimum left position of the element.</summary>
-        public T MinLeft(UnitValue minLeft) => SetStyleProperty(GuiProp.MinLeft, minLeft);
+        public T MinLeft(UnitValue minLeft) => SetStyleProperty<UnitValue>(GuiProp.MinLeft, minLeft);
 
         /// <summary>Sets the maximum left position of the element.</summary>
-        public T MaxLeft(UnitValue maxLeft) => SetStyleProperty(GuiProp.MaxLeft, maxLeft);
+        public T MaxLeft(UnitValue maxLeft) => SetStyleProperty<UnitValue>(GuiProp.MaxLeft, maxLeft);
 
         /// <summary>Sets the minimum right position of the element.</summary>
-        public T MinRight(UnitValue minRight) => SetStyleProperty(GuiProp.MinRight, minRight);
+        public T MinRight(UnitValue minRight) => SetStyleProperty<UnitValue>(GuiProp.MinRight, minRight);
 
         /// <summary>Sets the maximum right position of the element.</summary>
-        public T MaxRight(UnitValue maxRight) => SetStyleProperty(GuiProp.MaxRight, maxRight);
+        public T MaxRight(UnitValue maxRight) => SetStyleProperty<UnitValue>(GuiProp.MaxRight, maxRight);
 
         /// <summary>Sets the minimum top position of the element.</summary>
-        public T MinTop(UnitValue minTop) => SetStyleProperty(GuiProp.MinTop, minTop);
+        public T MinTop(UnitValue minTop) => SetStyleProperty<UnitValue>(GuiProp.MinTop, minTop);
 
         /// <summary>Sets the maximum top position of the element.</summary>
-        public T MaxTop(UnitValue maxTop) => SetStyleProperty(GuiProp.MaxTop, maxTop);
+        public T MaxTop(UnitValue maxTop) => SetStyleProperty<UnitValue>(GuiProp.MaxTop, maxTop);
 
         /// <summary>Sets the minimum bottom position of the element.</summary>
-        public T MinBottom(UnitValue minBottom) => SetStyleProperty(GuiProp.MinBottom, minBottom);
+        public T MinBottom(UnitValue minBottom) => SetStyleProperty<UnitValue>(GuiProp.MinBottom, minBottom);
 
         /// <summary>Sets the maximum bottom position of the element.</summary>
-        public T MaxBottom(UnitValue maxBottom) => SetStyleProperty(GuiProp.MaxBottom, maxBottom);
+        public T MaxBottom(UnitValue maxBottom) => SetStyleProperty<UnitValue>(GuiProp.MaxBottom, maxBottom);
 
         /// <summary>Sets uniform margin on all sides.</summary>
         public T Margin(UnitValue all) => Margin(all, all, all, all);
@@ -180,41 +181,41 @@ namespace Prowl.PaperUI
         /// <summary>Sets individual margins for each side.</summary>
         public T Margin(UnitValue left, UnitValue right, UnitValue top, UnitValue bottom)
         {
-            SetStyleProperty(GuiProp.Left, left);
-            SetStyleProperty(GuiProp.Right, right);
-            SetStyleProperty(GuiProp.Top, top);
-            return SetStyleProperty(GuiProp.Bottom, bottom);
+            SetStyleProperty<UnitValue>(GuiProp.Left, left);
+            SetStyleProperty<UnitValue>(GuiProp.Right, right);
+            SetStyleProperty<UnitValue>(GuiProp.Top, top);
+            return SetStyleProperty<UnitValue>(GuiProp.Bottom, bottom);
         }
 
         /// <summary>Sets the left padding for child elements.</summary>
-        public T ChildLeft(UnitValue childLeft) => SetStyleProperty(GuiProp.ChildLeft, childLeft);
+        public T ChildLeft(UnitValue childLeft) => SetStyleProperty<UnitValue>(GuiProp.ChildLeft, childLeft);
 
         /// <summary>Sets the right padding for child elements.</summary>
-        public T ChildRight(UnitValue childRight) => SetStyleProperty(GuiProp.ChildRight, childRight);
+        public T ChildRight(UnitValue childRight) => SetStyleProperty<UnitValue>(GuiProp.ChildRight, childRight);
 
         /// <summary>Sets the top padding for child elements.</summary>
-        public T ChildTop(UnitValue childTop) => SetStyleProperty(GuiProp.ChildTop, childTop);
+        public T ChildTop(UnitValue childTop) => SetStyleProperty<UnitValue>(GuiProp.ChildTop, childTop);
 
         /// <summary>Sets the bottom padding for child elements.</summary>
-        public T ChildBottom(UnitValue childBottom) => SetStyleProperty(GuiProp.ChildBottom, childBottom);
+        public T ChildBottom(UnitValue childBottom) => SetStyleProperty<UnitValue>(GuiProp.ChildBottom, childBottom);
 
         /// <summary>Sets the spacing between rows in a container.</summary>
-        public T RowBetween(UnitValue rowBetween) => SetStyleProperty(GuiProp.RowBetween, rowBetween);
+        public T RowBetween(UnitValue rowBetween) => SetStyleProperty<UnitValue>(GuiProp.RowBetween, rowBetween);
 
         /// <summary>Sets the spacing between columns in a container.</summary>
-        public T ColBetween(UnitValue colBetween) => SetStyleProperty(GuiProp.ColBetween, colBetween);
+        public T ColBetween(UnitValue colBetween) => SetStyleProperty<UnitValue>(GuiProp.ColBetween, colBetween);
 
         /// <summary>Sets the left border width.</summary>
-        public T BorderLeft(UnitValue borderLeft) => SetStyleProperty(GuiProp.BorderLeft, borderLeft);
+        public T BorderLeft(UnitValue borderLeft) => SetStyleProperty<UnitValue>(GuiProp.BorderLeft, borderLeft);
 
         /// <summary>Sets the right border width.</summary>
-        public T BorderRight(UnitValue borderRight) => SetStyleProperty(GuiProp.BorderRight, borderRight);
+        public T BorderRight(UnitValue borderRight) => SetStyleProperty<UnitValue>(GuiProp.BorderRight, borderRight);
 
         /// <summary>Sets the top border width.</summary>
-        public T BorderTop(UnitValue borderTop) => SetStyleProperty(GuiProp.BorderTop, borderTop);
+        public T BorderTop(UnitValue borderTop) => SetStyleProperty<UnitValue>(GuiProp.BorderTop, borderTop);
 
         /// <summary>Sets the bottom border width.</summary>
-        public T BorderBottom(UnitValue borderBottom) => SetStyleProperty(GuiProp.BorderBottom, borderBottom);
+        public T BorderBottom(UnitValue borderBottom) => SetStyleProperty<UnitValue>(GuiProp.BorderBottom, borderBottom);
 
         /// <summary>Sets uniform border width on all sides.</summary>
         public T Border(UnitValue all) => Border(all, all, all, all);
@@ -226,10 +227,10 @@ namespace Prowl.PaperUI
         /// <summary>Sets individual border widths for each side.</summary>
         public T Border(UnitValue left, UnitValue right, UnitValue top, UnitValue bottom)
         {
-            SetStyleProperty(GuiProp.BorderLeft, left);
-            SetStyleProperty(GuiProp.BorderRight, right);
-            SetStyleProperty(GuiProp.BorderTop, top);
-            return SetStyleProperty(GuiProp.BorderBottom, bottom);
+            SetStyleProperty<UnitValue>(GuiProp.BorderLeft, left);
+            SetStyleProperty<UnitValue>(GuiProp.BorderRight, right);
+            SetStyleProperty<UnitValue>(GuiProp.BorderTop, top);
+            return SetStyleProperty<UnitValue>(GuiProp.BorderBottom, bottom);
         }
 
         #endregion
@@ -237,42 +238,42 @@ namespace Prowl.PaperUI
         #region Text Properties
 
         /// <summary>Sets the color of text.</summary>
-        public T TextColor(Color color) => SetStyleProperty(GuiProp.TextColor, color);
+        public T TextColor(Color color) => SetStyleProperty<Color>(GuiProp.TextColor, color);
 
         /// <summary>Sets the spacing between words in text.</summary>
-        public T WordSpacing(float spacing) => SetStyleProperty(GuiProp.WordSpacing, spacing);
+        public T WordSpacing(float spacing) => SetStyleProperty<double>(GuiProp.WordSpacing, spacing);
         /// <summary>Sets the spacing between letters in text.</summary>
-        public T LetterSpacing(float spacing) => SetStyleProperty(GuiProp.LetterSpacing, spacing);
+        public T LetterSpacing(float spacing) => SetStyleProperty<double>(GuiProp.LetterSpacing, spacing);
         /// <summary>Sets the height of a line in text.</summary>
-        public T LineHeight(float height) => SetStyleProperty(GuiProp.LineHeight, height);
+        public T LineHeight(float height) => SetStyleProperty<double>(GuiProp.LineHeight, height);
 
         /// <summary>Sets the size of a Tab character in spaces.</summary>
-        public T TabSize(int size) => SetStyleProperty(GuiProp.TabSize, size);
+        public T TabSize(int size) => SetStyleProperty<int>(GuiProp.TabSize, size);
         /// <summary>Sets the size of text in pixels.</summary>
-        public T FontSize(float size) => SetStyleProperty(GuiProp.FontSize, size);
+        public T FontSize(float size) => SetStyleProperty<float>(GuiProp.FontSize, size);
 
         #endregion
 
         #region Transform Properties
 
         /// <summary>Sets horizontal translation.</summary>
-        public T TranslateX(double x) => SetStyleProperty(GuiProp.TranslateX, x);
+        public T TranslateX(double x) => SetStyleProperty<double>(GuiProp.TranslateX, x);
 
         /// <summary>Sets vertical translation.</summary>
-        public T TranslateY(double y) => SetStyleProperty(GuiProp.TranslateY, y);
+        public T TranslateY(double y) => SetStyleProperty<double>(GuiProp.TranslateY, y);
 
         /// <summary>Sets both horizontal and vertical translation.</summary>
         public T Translate(double x, double y)
         {
-            SetStyleProperty(GuiProp.TranslateX, x);
-            return SetStyleProperty(GuiProp.TranslateY, y);
+            SetStyleProperty<double>(GuiProp.TranslateX, x);
+            return SetStyleProperty<double>(GuiProp.TranslateY, y);
         }
 
         /// <summary>Sets horizontal scaling factor.</summary>
-        public T ScaleX(double x) => SetStyleProperty(GuiProp.ScaleX, x);
+        public T ScaleX(double x) => SetStyleProperty<double>(GuiProp.ScaleX, x);
 
         /// <summary>Sets vertical scaling factor.</summary>
-        public T ScaleY(double y) => SetStyleProperty(GuiProp.ScaleY, y);
+        public T ScaleY(double y) => SetStyleProperty<double>(GuiProp.ScaleY, y);
 
         /// <summary>Sets uniform scaling in both directions.</summary>
         public T Scale(double scale) => Scale(scale, scale);
@@ -280,35 +281,35 @@ namespace Prowl.PaperUI
         /// <summary>Sets individual scaling factors for each axis.</summary>
         public T Scale(double x, double y)
         {
-            SetStyleProperty(GuiProp.ScaleX, x);
-            return SetStyleProperty(GuiProp.ScaleY, y);
+            SetStyleProperty<double>(GuiProp.ScaleX, x);
+            return SetStyleProperty<double>(GuiProp.ScaleY, y);
         }
 
         /// <summary>Sets rotation angle in degrees.</summary>
-        public T Rotate(double angleInDegrees) => SetStyleProperty(GuiProp.Rotate, angleInDegrees);
+        public T Rotate(double angleInDegrees) => SetStyleProperty<double>(GuiProp.Rotate, angleInDegrees);
 
         /// <summary>Sets horizontal skew angle.</summary>
-        public T SkewX(double angle) => SetStyleProperty(GuiProp.SkewX, angle);
+        public T SkewX(double angle) => SetStyleProperty<double>(GuiProp.SkewX, angle);
 
         /// <summary>Sets vertical skew angle.</summary>
-        public T SkewY(double angle) => SetStyleProperty(GuiProp.SkewY, angle);
+        public T SkewY(double angle) => SetStyleProperty<double>(GuiProp.SkewY, angle);
 
         /// <summary>Sets both horizontal and vertical skew angles.</summary>
         public T Skew(double x, double y)
         {
-            SetStyleProperty(GuiProp.SkewX, x);
-            return SetStyleProperty(GuiProp.SkewY, y);
+            SetStyleProperty<double>(GuiProp.SkewX, x);
+            return SetStyleProperty<double>(GuiProp.SkewY, y);
         }
 
         /// <summary>Sets the origin point for transformations.</summary>
         public T TransformOrigin(double x, double y)
         {
-            SetStyleProperty(GuiProp.OriginX, x);
-            return SetStyleProperty(GuiProp.OriginY, y);
+            SetStyleProperty<double>(GuiProp.OriginX, x);
+            return SetStyleProperty<double>(GuiProp.OriginY, y);
         }
 
         /// <summary>Sets a complete transform matrix.</summary>
-        public T Transform(Transform2D transform) => SetStyleProperty(GuiProp.Transform, transform);
+        public T Transform(Transform2D transform) => SetStyleProperty<Transform2D>(GuiProp.Transform, transform);
 
         #endregion
 
@@ -407,7 +408,7 @@ namespace Prowl.PaperUI
             return this;
         }
 
-        public override StateDrivenStyle SetStyleProperty(GuiProp property, object value)
+        public override StateDrivenStyle SetStyleProperty<T>(GuiProp property, T value)
         {
             if (_isActive)
                 _owner._paper.SetStyleProperty(_element.ID, property, value);
@@ -444,7 +445,9 @@ namespace Prowl.PaperUI
     /// </summary>
     public class StyleTemplate : StyleSetterBase<StyleTemplate>
     {
-        private readonly Dictionary<GuiProp, object> _styleProperties = new Dictionary<GuiProp, object>();
+        private GuiProperties _styleProps = new();
+        private HashSet<GuiProp> _setStyleProps = new();
+        // private readonly Dictionary<GuiProp, object> _styleProperties = new Dictionary<GuiProp, object>();
         private readonly Dictionary<GuiProp, (double duration, Func<double, double> easing)> _transitions = new Dictionary<GuiProp, (double, Func<double, double>)>();
 
         /// <summary>
@@ -455,9 +458,12 @@ namespace Prowl.PaperUI
         /// <summary>
         /// Sets a style property in the template
         /// </summary>
-        public override StyleTemplate SetStyleProperty(GuiProp property, object value)
+        public override StyleTemplate SetStyleProperty<T>(GuiProp property, T value)
         {
-            _styleProperties[property] = value;
+
+            // _styleProperties[property] = value;
+            _setStyleProps.Add(property);
+            StyleUtils.SetValueInStruct(property, ref _styleProps, value);
             return this;
         }
 
@@ -480,9 +486,50 @@ namespace Prowl.PaperUI
         public void ApplyTo(Element element)
         {
             if (element.Owner == null) throw new ArgumentNullException(nameof(element));
-            foreach (var kvp in _styleProperties)
+            foreach (GuiProp property in _setStyleProps)
             {
-                element.Owner!.SetStyleProperty(element.ID, kvp.Key, kvp.Value);
+                Type targetType = StyleUtils.GuiPropTypes[property];
+                switch (targetType)
+                {
+                    case Type t when t == typeof(Color):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<Color>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(Gradient):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<Gradient>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(double):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<double>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(Vector4):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<Vector4>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(BoxShadow):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<BoxShadow>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(UnitValue):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<UnitValue>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(int):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<int>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(float):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<float>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(Transform2D):
+                        element.Owner!.SetStyleProperty(element.ID, property, StyleUtils.GetValueFromStruct<Transform2D>(property, _styleProps));
+                        break;
+
+                    default:
+                        throw new InvalidOperationException($"Unsupported type {targetType} for property {property}.");
+                }
             }
 
             // Apply transitions
@@ -497,9 +544,50 @@ namespace Prowl.PaperUI
         /// </summary>
         public StyleTemplate ApplyTo(StyleTemplate other)
         {
-            foreach (var kvp in _styleProperties)
+            foreach (GuiProp property in _setStyleProps)
             {
-                other.SetStyleProperty(kvp.Key, kvp.Value);
+                Type targetType = StyleUtils.GuiPropTypes[property];
+                switch (targetType)
+                {
+                    case Type t when t == typeof(Color):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<Color>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(Gradient):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<Gradient>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(double):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<double>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(Vector4):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<Vector4>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(BoxShadow):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<BoxShadow>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(UnitValue):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<UnitValue>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(int):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<int>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(float):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<float>(property, _styleProps));
+                        break;
+
+                    case Type t when t == typeof(Transform2D):
+                        other.SetStyleProperty(property, StyleUtils.GetValueFromStruct<Transform2D>(property, _styleProps));
+                        break;
+
+                    default:
+                        throw new InvalidOperationException($"Unsupported type {targetType} for property {property}.");
+                }
             }
 
             // Apply transitions
@@ -516,10 +604,17 @@ namespace Prowl.PaperUI
         public StyleTemplate Clone()
         {
             var clone = new StyleTemplate();
-            foreach (var kvp in _styleProperties)
+            clone._styleProps = _styleProps;
+
+            foreach (GuiProp prop in _setStyleProps)
             {
-                clone._styleProperties[kvp.Key] = kvp.Value;
+                clone._setStyleProps.Add(prop);
             }
+            // clone._setStyleProps = _setStyleProps;
+            // foreach (var kvp in _styleProperties)
+            // {
+            //     clone._styleProperties[kvp.Key] = kvp.Value;
+            // }
 
             // Clone transitions
             foreach (var kvp in _transitions)
@@ -561,11 +656,13 @@ namespace Prowl.PaperUI
             return this;
         }
 
-        public override ElementBuilder SetStyleProperty(GuiProp property, object value)
+        public override ElementBuilder SetStyleProperty<T>(GuiProp property, T value)
         {
             _paper.SetStyleProperty(_element.ID, property, value);
             return this;
         }
+
+        // public override T SetStyleProperty<T, T2>(GuiProp property, T2 value) => throw new NotImplementedException();
 
         /// <summary>
         /// Configures a property transition with the specified duration and easing function.

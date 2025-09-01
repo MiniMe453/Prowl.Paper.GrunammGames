@@ -118,12 +118,12 @@ namespace Prowl.PaperUI.LayoutEngine
             {
                 var settings = TextLayoutSettings.Default;
 
-                settings.WordSpacing = Convert.ToSingle(_elementStyle.GetValue(GuiProp.WordSpacing));
-                settings.LetterSpacing = Convert.ToSingle(_elementStyle.GetValue(GuiProp.LetterSpacing));
-                settings.LineHeight = Convert.ToSingle(_elementStyle.GetValue(GuiProp.LineHeight));
+                settings.WordSpacing = Convert.ToSingle(_elementStyle.GetValue<double>(GuiProp.WordSpacing));
+                settings.LetterSpacing = Convert.ToSingle(_elementStyle.GetValue<double>(GuiProp.LetterSpacing));
+                settings.LineHeight = Convert.ToSingle(_elementStyle.GetValue<double>(GuiProp.LineHeight));
 
-                settings.TabSize = (int)_elementStyle.GetValue(GuiProp.TabSize);
-                settings.PixelSize = Convert.ToSingle(_elementStyle.GetValue(GuiProp.FontSize));
+                settings.TabSize = (int)_elementStyle.GetValue<int>(GuiProp.TabSize);
+                settings.PixelSize = _elementStyle.GetValue<float>(GuiProp.FontSize);
 
                 if(TextAlignment == TextAlignment.Left || TextAlignment == TextAlignment.MiddleLeft || TextAlignment == TextAlignment.BottomLeft)
                     settings.Alignment = Scribe.TextAlignment.Left;
@@ -193,7 +193,7 @@ namespace Prowl.PaperUI.LayoutEngine
 
             Canvas canvas = Owner?.Canvas ?? throw new InvalidOperationException("Owner paper or canvas is not set.");
 
-            var color = (Color)_elementStyle.GetValue(GuiProp.TextColor);
+            var color = (Color)_elementStyle.GetValue<Color>(GuiProp.TextColor);
 
             FontColor fs = new FontColor(color.R, color.G, color.B, color.A);
 
