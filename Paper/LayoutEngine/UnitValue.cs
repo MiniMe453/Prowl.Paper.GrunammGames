@@ -1,7 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Numerics;
-
-using Prowl.PaperUI;
+﻿using Prowl.PaperUI;
 
 namespace Prowl.PaperUI.LayoutEngine
 {
@@ -9,7 +6,7 @@ namespace Prowl.PaperUI.LayoutEngine
     /// Represents a value with a unit type for UI layout measurements.
     /// Supports pixels, percentages, auto-sizing, and stretch units with interpolation capabilities.
     /// </summary>
-    public class UnitValue
+    public struct UnitValue
     {
         /// <summary>
         /// Helper class for interpolation between two UnitValue instances.
@@ -45,36 +42,28 @@ namespace Prowl.PaperUI.LayoutEngine
         /// <summary>Data for interpolation between two UnitValues (null when not interpolating)</summary>
         private LerpData? _lerpData = null;
 
+        public bool HasLerp => _lerpData != null;
+
+        public static int NumberOfCreations = 0;
+        public static int NumLastFrame = 0;
+        public static UnitValue DefaultAuto = new(Units.Auto);
+        public static UnitValue DefaultStretch = new(Units.Stretch);
+        public static UnitValue DefaultMinPx = new(Units.Pixels, 0);
+        public static UnitValue DefaultMaxPx = new(Units.Pixels, double.MaxValue);
+
+        public static void ResetCount()
+        {
+            NumLastFrame = NumberOfCreations;
+            NumberOfCreations = 0;
+        }
+
         /// <summary>
         /// Creates a default UnitValue with Auto units.
         /// </summary>
-        public UnitValue() { }
-
-        private static List<UnitValue> _valueCache = new();
-
-        private static List<UnitValue> CheckCacheSize()
+        public UnitValue()
         {
-            if (_currentCacheIndex >= _valueCache.Count)
-            {
-                _valueCache.Add(new());
-            }
-
-            return _valueCache;
+            NumberOfCreations++;
         }
-        public static List<UnitValue> ValueCache
-        {
-            get
-            {
-                if (_currentCacheIndex >= _valueCache.Count)
-                {
-                    _valueCache.Add(new());
-                }
-
-                return _valueCache;
-            }
-        }
-        public static int _currentCacheIndex;
-        public static void Free() => _currentCacheIndex = 0;
 
         /// <summary>
         /// Creates a UnitValue with the specified type and value.
@@ -87,71 +76,32 @@ namespace Prowl.PaperUI.LayoutEngine
             Type = type;
             Value = value;
             PercentPixelOffset = offset;
+            NumberOfCreations++;
         }
 
         #region Factory Methods
 
         /// <summary>Creates an Auto unit value</summary>
-        public static UnitValue Auto
-        {
-            get
-            {
-                _currentCacheIndex++;
-                CheckCacheSize();
-                var cachedValue = ValueCache[_currentCacheIndex];
-                cachedValue.Type = Units.Auto;
-                return cachedValue;
-            }
-        }
+        public static UnitValue Auto => new UnitValue(Units.Auto);
 
         /// <summary>
         /// Creates a Stretch unit value with the specified factor.
         /// </summary>
         /// <param name="factor">Stretch factor (relative to other stretch elements)</param>
-        public static UnitValue Stretch(double factor = 1f)
-        {
-            _currentCacheIndex++;
-            CheckCacheSize();
-            var cachedValue = ValueCache[_currentCacheIndex];
-            // ValueCache[_currentCacheIndex] = new UnitValue(Units.Stretch, factor);
-            cachedValue.Type = Units.Stretch;
-            cachedValue.Value = factor;
+        public static UnitValue Stretch(double factor = 1f) => new UnitValue(Units.Stretch, factor);
 
-            return cachedValue;
-        }
         /// <summary>
         /// Creates a Pixel unit value.
         /// </summary>
         /// <param name="value">Size in pixels</param>
-        public static UnitValue Pixels(double value)
-        {
-            _currentCacheIndex++;
-            CheckCacheSize();
-            // ValueCache[_currentCacheIndex] = new UnitValue(Units.Pixels, value);
-            var cachedValue = ValueCache[_currentCacheIndex];
-            cachedValue.Type = Units.Pixels;
-            cachedValue.Value = value;
-            return cachedValue;
-        }
+        public static UnitValue Pixels(double value) => new UnitValue(Units.Pixels, value);
 
         /// <summary>
         /// Creates a Percentage unit value.
         /// </summary>
         /// <param name="value">Percentage value (0-100)</param>
         /// <param name="offset">Additional pixel offset</param>
-        public static UnitValue Percentage(double value, double offset = 0f)
-        {
-            _currentCacheIndex++;
-
-            // ValueCache[_currentCacheIndex] = new UnitValue(Units.Percentage, value, offset);
-
-            CheckCacheSize();
-            var cachedValue = ValueCache[_currentCacheIndex];
-            cachedValue.Type = Units.Percentage;
-            cachedValue.Value = value;
-            cachedValue.PercentPixelOffset = offset;
-            return cachedValue;
-        }
+        public static UnitValue Percentage(double value, double offset = 0f) => new UnitValue(Units.Percentage, value, offset);
 
         #endregion
 

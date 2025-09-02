@@ -10,8 +10,8 @@ namespace Prowl.PaperUI.LayoutEngine
 
         internal UISize Layout()
         {
-            var wValue = (UnitValue)_elementStyle.GetValue<UnitValue>(GuiProp.Width);
-            var hValue = (UnitValue)_elementStyle.GetValue<UnitValue>(GuiProp.Height);
+            var wValue = _elementStyle.GetValue<UnitValue>(GuiProp.Width);
+            var hValue = _elementStyle.GetValue<UnitValue>(GuiProp.Height);
             double width = wValue.IsPixels ? wValue.Value : throw new Exception("Root element must have fixed width");
             double height = hValue.IsPixels ? hValue.Value : throw new Exception("Root element must have fixed height");
 
@@ -28,7 +28,7 @@ namespace Prowl.PaperUI.LayoutEngine
             return size;
         }
 
-        private UnitValue GetProp(LayoutType parentType, GuiProp row, GuiProp column) => (UnitValue)_elementStyle.GetValue<UnitValue>(parentType == LayoutType.Row ? row : column);
+        private UnitValue GetProp(LayoutType parentType, GuiProp row, GuiProp column) => _elementStyle.GetValue<UnitValue>(parentType == LayoutType.Row ? row : column);
 
         private UnitValue GetMain(LayoutType parentType) => GetProp(parentType, GuiProp.Width, GuiProp.Height);
         private UnitValue GetCross(LayoutType parentType) => GetProp(parentType, GuiProp.Height, GuiProp.Width);

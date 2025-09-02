@@ -72,6 +72,7 @@ namespace Prowl.PaperUI
             _rootElement = new LayoutEngine.Element(this) {
                 ID = 0
             };
+            _rootElement._elementStyle = GetStyleFromPool();
             _rootElement._elementStyle.SetDirectValue(GuiProp.Width, UnitValue.Pixels(_width));
             _rootElement._elementStyle.SetDirectValue(GuiProp.Height, UnitValue.Pixels(_height));
 
@@ -129,8 +130,11 @@ namespace Prowl.PaperUI
             _rootElement = new LayoutEngine.Element(this) {
                 ID = 0
             };
+            _rootElement._elementStyle = GetStyleFromPool();
             _rootElement._elementStyle.SetDirectValue(GuiProp.Width, UnitValue.Pixels(_width));
             _rootElement._elementStyle.SetDirectValue(GuiProp.Height, UnitValue.Pixels(_height));
+            // SetStyleProperty(_rootElement.ID, GuiProp.Width, UnitValue.Pixels(_width));
+            // SetStyleProperty(_rootElement.ID, GuiProp.Height, UnitValue.Pixels(_height));
 
             // Initialize stacks
             _elementStack.Push(_rootElement);

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Concurrent;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 
 using Prowl.PaperUI.LayoutEngine;
@@ -338,6 +339,7 @@ internal class ElementStyle
 
     private static readonly GuiProperties _defaultValues = new();
     private GuiProperties _currentGuiValues = new();
+    public GuiProperties Properties => _currentGuiValues;
     private GuiProperties _targetGuiValues = new();
 
     // State tracking
@@ -362,7 +364,7 @@ internal class ElementStyle
 
     #region Public Methods
 
-    public void RemoveFromPool()
+    public void ReturnToPool()
     {
         _propertiesSetThisFrame.Clear();
         _propertiesWithTransitions.Clear();
@@ -785,87 +787,16 @@ internal class ElementStyle
 
         if (isFinished) completedInterpolations.Add(property);
     }
-
-    /// <summary>
-    ///     Gets the default value for a property.
-    /// </summary>
-    private object GetDefaultValue(GuiProp property) =>
-        property switch
-        {
-            // Visual Properties
-            GuiProp.BackgroundColor => Color.Transparent,
-            GuiProp.BackgroundGradient => Gradient.None,
-            GuiProp.BorderColor => Color.Transparent,
-            GuiProp.BorderWidth => 0.0,
-            GuiProp.Rounded => new Vector4(0, 0, 0, 0),
-            GuiProp.BoxShadow => BoxShadow.None,
-
-            // Core Layout Properties
-            GuiProp.AspectRatio => -1.0,
-            GuiProp.Width => UnitValue.Stretch(),
-            GuiProp.Height => UnitValue.Stretch(),
-            GuiProp.MinWidth => UnitValue.Pixels(0),
-            GuiProp.MaxWidth => UnitValue.Pixels(double.MaxValue),
-            GuiProp.MinHeight => UnitValue.Pixels(0),
-            GuiProp.MaxHeight => UnitValue.Pixels(double.MaxValue),
-
-            // Positioning Properties
-            GuiProp.Left => UnitValue.Auto,
-            GuiProp.Right => UnitValue.Auto,
-            GuiProp.Top => UnitValue.Auto,
-            GuiProp.Bottom => UnitValue.Auto,
-            GuiProp.MinLeft => UnitValue.Pixels(0),
-            GuiProp.MaxLeft => UnitValue.Pixels(double.MaxValue),
-            GuiProp.MinRight => UnitValue.Pixels(0),
-            GuiProp.MaxRight => UnitValue.Pixels(double.MaxValue),
-            GuiProp.MinTop => UnitValue.Pixels(0),
-            GuiProp.MaxTop => UnitValue.Pixels(double.MaxValue),
-            GuiProp.MinBottom => UnitValue.Pixels(0),
-            GuiProp.MaxBottom => UnitValue.Pixels(double.MaxValue),
-
-            // Child Layout Properties
-            GuiProp.ChildLeft => UnitValue.Auto,
-            GuiProp.ChildRight => UnitValue.Auto,
-            GuiProp.ChildTop => UnitValue.Auto,
-            GuiProp.ChildBottom => UnitValue.Auto,
-            GuiProp.RowBetween => UnitValue.Auto,
-            GuiProp.ColBetween => UnitValue.Auto,
-            GuiProp.BorderLeft => UnitValue.Pixels(0),
-            GuiProp.BorderRight => UnitValue.Pixels(0),
-            GuiProp.BorderTop => UnitValue.Pixels(0),
-            GuiProp.BorderBottom => UnitValue.Pixels(0),
-
-            // Transform Properties
-            GuiProp.TranslateX => 0.0,
-            GuiProp.TranslateY => 0.0,
-            GuiProp.ScaleX => 1.0,
-            GuiProp.ScaleY => 1.0,
-            GuiProp.Rotate => 0.0,
-            GuiProp.SkewX => 0.0,
-            GuiProp.SkewY => 0.0,
-            GuiProp.OriginX => 0.5, // Default is center
-            GuiProp.OriginY => 0.5, // Default is center
-            GuiProp.Transform => Transform2D.Identity,
-
-            // Text Properties
-            GuiProp.TextColor => Color.White,
-
-            GuiProp.WordSpacing => 0.0,
-            GuiProp.LetterSpacing => 0.0,
-            GuiProp.LineHeight => 1.0,
-
-            GuiProp.TabSize => 4,
-            GuiProp.FontSize => 16.0f,
-
-            _ => throw new ArgumentOutOfRangeException(nameof(property), property, null)
-        };
-
     #endregion
 }
 
 public partial class Paper
 {
     #region Style Management
+
+    private ConcurrentBag<ElementStyle> _stylePool = new();
+    private int _currentStyleIndex;
+    public int stylesLastFrame = 0;
 
     /// <summary>
     ///     A dictionary to keep track of active styles for each element.
@@ -901,21 +832,41 @@ public partial class Paper
         }
     }
 
+    internal ElementStyle GetStyleFromPool()
+    {
+        if (_stylePool.IsEmpty)
+        {
+            return new ElementStyle();
+        }
+
+        if (_stylePool.TryTake(out ElementStyle elementStyle))
+            return elementStyle;
+
+        throw new InvalidOperationException("We failed to get a style from the pool. If you are seeing this, it means something went very wrong.");
+    }
+
     /// <summary>
     ///     Set a style property value (no transition).
     /// </summary>
+    /// TODO the issue is here because we don't have a way to check if the element style is already set and we were always overriding
+    /// its value inside of the update function, since it wasn't a part of the active styles dictionary.
+    /// maybe we need to add it to the active styles as soon as we create an element, rather than doing some janky shit here
+    /// then it will be possible to directly attach a style to an element
     internal void SetStyleProperty<T>(ulong elementID, GuiProp property, T value)
     {
         if (!_activeStyles.TryGetValue(elementID, out ElementStyle? style))
         {
             // Create a new style if it doesn't exist
-            style = new ElementStyle();
+            style = GetStyleFromPool();
             _activeStyles[elementID] = style;
+            // _createdElements[elementID]._elementStyle = style;
         }
 
         // Set the next value
         style.SetNextValue(property, value);
     }
+
+
 
     /// <summary>
     ///     Configure a transition for a property.
@@ -928,6 +879,7 @@ public partial class Paper
             // Create a new style if it doesn't exist
             style = new ElementStyle();
             _activeStyles[elementID] = style;
+            // _createdElements[elementID]._elementStyle = style;
         }
 
         // Set up the transition configuration
@@ -939,13 +891,16 @@ public partial class Paper
     /// </summary>
     private void EndOfFrameCleanupStyles(Dictionary<ulong, Element> createdElements)
     {
+        int removedSomeStyles = 0;
         // Clean up any elements that haven't been accessed this frame
-        List<ulong> elementsToRemove = new();
         foreach (KeyValuePair<ulong, ElementStyle> kvp in _activeStyles)
         {
             if (!createdElements.ContainsKey(kvp.Key))
             {
-                elementsToRemove.Add(kvp.Key);
+                _activeStyles[kvp.Key].ReturnToPool();
+                _stylePool.Add(_activeStyles[kvp.Key]);
+                _activeStyles.Remove(kvp.Key);
+                removedSomeStyles++;
             }
             else
             {
@@ -953,10 +908,7 @@ public partial class Paper
             }
         }
 
-        foreach (ulong id in elementsToRemove)
-        {
-            _activeStyles.Remove(id);
-        }
+        if (removedSomeStyles > 0) return;
     }
 
     #endregion
@@ -1209,13 +1161,21 @@ public struct GuiProperties
     public UnitValue BorderRight;
     public UnitValue BorderTop;
     public UnitValue BorderBottom;
+    private bool _defaultValueSet = false;
 
     // Constructor
-    public GuiProperties() => SetDefaultValues();
+    public GuiProperties()
+    {
+        // if (_defaultValueSet)
+        //     throw new InvalidOperationException(
+        //         "You cannot set the default values twice. If you want to do this, cache them in another variable and set the struct directly");
+        SetDefaultValues();
+    }
 
     // Sets default values
     public void SetDefaultValues()
     {
+        _defaultValueSet = true;
         // Colors and gradients
         BackgroundColor = Color.Transparent;
         BorderColor = Color.Transparent;

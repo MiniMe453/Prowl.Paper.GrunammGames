@@ -51,28 +51,32 @@ namespace Shared
                 //.Style(BoxStyle.Solid(backgroundColor))
                 .Enter())
             {
-                // A stupid simple way to benchmark the performance of the UI (Adds the entire ui multiple times)
-                for (int i = 0; i < 1; i++)
-                {
-                    Gui.PushID((ulong)i);
-                    // Top navigation bar
-                    RenderTopNavBar();
-
-                    // Main content area
-                    using (Gui.Row("ContentArea")
-                        .Enter())
-                    {
-                        // Left sidebar
-                        RenderSidebar();
-
-                        // Content area (tabs content)
-                        RenderMainContent();
-                    }
-
-                    // Footer
-                    RenderFooter();
-                    Gui.PopID();
-                }
+                using (Gui.Column("Sidebar")
+                           .Style("sidebar")  // Automatic hover expansion with transitions
+                           .Margin(15)
+                           .Enter()){}
+                // // A stupid simple way to benchmark the performance of the UI (Adds the entire ui multiple times)
+                // for (int i = 0; i < 1; i++)
+                // {
+                //     Gui.PushID((ulong)i);
+                //     // Top navigation bar
+                //     RenderTopNavBar();
+                //
+                //     // Main content area
+                //     using (Gui.Row("ContentArea")
+                //         .Enter())
+                //     {
+                //         // Left sidebar
+                //         RenderSidebar();
+                //
+                //         // Content area (tabs content)
+                //         RenderMainContent();
+                //     }
+                //
+                //     // Footer
+                //     RenderFooter();
+                //     Gui.PopID();
+                // }
             }
 
 
@@ -195,7 +199,8 @@ namespace Shared
                     .Margin(0, 15, 15, 0)
                     .OnClick((rect) => Console.WriteLine("Profile clicked"));
 
-                Gui.Box("ID Count").Text(UnitValue.ValueCache.Count.ToString());
+                Gui.Box("ID Count").Text(UnitValue.NumLastFrame.ToString());
+                Gui.Box("ID Count").Text(Gui.stylesLastFrame.ToString());
             }
         }
 

@@ -88,7 +88,7 @@ namespace Prowl.PaperUI.LayoutEngine
         public Element(Paper owner)
         {
             Owner = owner;
-            _elementStyle = Owner.GetStyleFromPool();
+            // _elementStyle = owner.GetStyleFromPool();
         }
 
         internal void RemoveFromPool()

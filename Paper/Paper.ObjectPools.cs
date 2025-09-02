@@ -11,30 +11,35 @@ public partial class Paper
     private List<ElementBuilder> _builderPool = new();
     private int _currentBuilderIndex = 0;
 
-    private List<ElementStyle> _stylePool = new();
-    private int _currentStyleIndex;
-
-    internal ElementStyle GetStyleFromPool()
-    {
-        ElementStyle style;
-        if (_currentStyleIndex >= _stylePool.Count)
-        {
-            style = new ElementStyle();
-            _stylePool.Add(style);
-        }
-        else
-        {
-            style = _stylePool[_currentStyleIndex];
-        }
-
-        _currentStyleIndex++;
-        style.RemoveFromPool();
-        return style;
-    }
+    // internal ElementStyle GetStyleFromPool(ulong id)
+    // {
+    //     ElementStyle style;
+    //     if (_currentStyleIndex >= _stylePool.Count)
+    //     {
+    //         style = new ElementStyle();
+    //         _stylePool.Add(style);
+    //         _styleOwnerIds.Add(id);
+    //     }
+    //     else
+    //     {
+    //         style = _stylePool[_currentStyleIndex];
+    //
+    //         if (_styleOwnerIds[_currentStyleIndex] != id)
+    //         {
+    //             style.ReturnToPool();
+    //             _styleOwnerIds[_currentStyleIndex] = id;
+    //         }
+    //     }
+    //
+    //     _currentStyleIndex++;
+    //
+    //     return style;
+    // }
 
     private void EndOfFramePoolCleanup()
     {
-        UnitValue.Free();
+        UnitValue.ResetCount();
+        stylesLastFrame = _currentStyleIndex;
         _currentBuilderIndex = 0;
         _currentStyleIndex = 0;
     }
