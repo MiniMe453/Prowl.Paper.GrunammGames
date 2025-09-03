@@ -172,6 +172,7 @@ namespace Prowl.PaperUI
             // Cleanup
             EndOfFrameCleanupStyles(_createdElements);
             EndOfFrameCleanupStorage();
+            EndOfFramePoolCleanup();
 
             // Performance measurement
             _timer.Stop();
@@ -560,12 +561,11 @@ namespace Prowl.PaperUI
                 throw new Exception("Element already exists with this ID: " + stringID + ":" + intID + " = " + storageHash + " Parent: " + CurrentParent.Data.ID + "\nPlease use a different ID.");
 
             var handle = CreateElement(storageHash);
-            var builder = new ElementBuilder(this, handle);
             _createdElements.Add(storageHash);
 
             AddChild(ref handle);
 
-            return builder;
+            return GetBuilderFromPool(handle);
         }
 
         /// <summary>

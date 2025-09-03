@@ -594,6 +594,14 @@ namespace Prowl.PaperUI
             _paper = paper;
         }
 
+        public ElementBuilder SetData(Paper paper, ElementHandle handle)
+        {
+            _handle = handle;
+            _paper = paper;
+
+            return this;
+        }
+
         public override ElementBuilder SetStyleProperty<T>(GuiProp property, T value)
         {
             _paper.SetStyleProperty(_handle.Data.ID, property, value);
@@ -1279,6 +1287,7 @@ namespace Prowl.PaperUI
             };
         }
 
+        //TODO we probably need to deal with this if using a single element builder
         /// <summary>
         /// Internal state container for text input data to reduce storage operations.
         /// Supports both single-line and multi-line text input.
