@@ -121,7 +121,7 @@ namespace Prowl.PaperUI.LayoutEngine
                 _quillMarkdown = null,
                 _textLayout = null,
                 _renderCommands = null,
-                _elementStyle = new ElementStyle(), //TODO can probably delete this. Just need to fix everything first.
+                _elementStyle = null, //TODO can probably delete this. Just need to fix everything first.
                 _scissorEnabled = false,
                 Layer = Layer.Base,
                 ProcessedText = false,
