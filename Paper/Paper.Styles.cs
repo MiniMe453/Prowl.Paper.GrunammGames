@@ -487,7 +487,6 @@ internal class ElementStyle
         // Process all properties that have target values
         foreach (GuiProp property in _targetValues)
         {
-            _currentValues.Add(property);
             Type targetType = StyleUtils.GuiPropTypes[property];
             switch (targetType)
             {
@@ -530,6 +529,8 @@ internal class ElementStyle
                 default:
                     throw new InvalidOperationException($"Unsupported type {targetType} for property {property}.");
             }
+
+            _currentValues.Add(property);
         }
 
         // Clean up completed interpolations
