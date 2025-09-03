@@ -10,12 +10,13 @@ namespace Prowl.PaperUI.LayoutEngine
     {
         /// <summary>
         /// Helper class for interpolation between two UnitValue instances.
+        /// Using a simplified class approach to avoid struct cycles.
         /// </summary>
         private class LerpData
         {
-            public UnitValue Start;
-            public UnitValue End;
-            public double Progress;
+            public readonly UnitValue Start;
+            public readonly UnitValue End; 
+            public readonly double Progress;
 
             public LerpData(UnitValue start, UnitValue end, double progress)
             {
@@ -23,11 +24,6 @@ namespace Prowl.PaperUI.LayoutEngine
                 End = end;
                 Progress = progress;
             }
-
-            /// <summary>
-            /// Creates a deep copy of the interpolation data.
-            /// </summary>
-            public LerpData Clone() => new LerpData(Start.Clone(), End.Clone(), Progress);
         }
 
         /// <summary>The unit type of this value</summary>
@@ -42,28 +38,10 @@ namespace Prowl.PaperUI.LayoutEngine
         /// <summary>Data for interpolation between two UnitValues (null when not interpolating)</summary>
         private LerpData? _lerpData = null;
 
-        public bool HasLerp => _lerpData != null;
-
-        public static int NumberOfCreations = 0;
-        public static int NumLastFrame = 0;
-        public static UnitValue DefaultAuto = new(Units.Auto);
-        public static UnitValue DefaultStretch = new(Units.Stretch);
-        public static UnitValue DefaultMinPx = new(Units.Pixels, 0);
-        public static UnitValue DefaultMaxPx = new(Units.Pixels, double.MaxValue);
-
-        public static void ResetCount()
-        {
-            NumLastFrame = NumberOfCreations;
-            NumberOfCreations = 0;
-        }
-
         /// <summary>
         /// Creates a default UnitValue with Auto units.
         /// </summary>
-        public UnitValue()
-        {
-            NumberOfCreations++;
-        }
+        public UnitValue() { }
 
         /// <summary>
         /// Creates a UnitValue with the specified type and value.
@@ -76,13 +54,14 @@ namespace Prowl.PaperUI.LayoutEngine
             Type = type;
             Value = value;
             PercentPixelOffset = offset;
-            NumberOfCreations++;
         }
 
         #region Factory Methods
 
-        /// <summary>Creates an Auto unit value</summary>
-        public static UnitValue Auto => new UnitValue(Units.Auto);
+        /// <summary>Pre-allocated common values to avoid allocations</summary>
+        public static readonly UnitValue Auto = new UnitValue(Units.Auto);
+        public static readonly UnitValue ZeroPixels = new UnitValue(Units.Pixels, 0);
+        public static readonly UnitValue StretchOne = new UnitValue(Units.Stretch, 1);
 
         /// <summary>
         /// Creates a Stretch unit value with the specified factor.
@@ -127,11 +106,7 @@ namespace Prowl.PaperUI.LayoutEngine
         /// <param name="parentValue">The parent element's size in pixels</param>
         /// <param name="defaultValue">Default value to use for Auto and Stretch units</param>
         /// <returns>Size in pixels</returns>
-        /// TODO the data is getting stored and read correctly. The issue is that the value for the pixels is not being set properly
-        /// I am not sure if this is because it's using stretch? Maybe this is the reason and that needs to be solved first.
-        /// I think going back to the branch where it is all working and tracing that code would be a good idea, because
-        /// I am completely lost on where to take this code.
-        public double ToPx(double parentValue, double defaultValue)
+        public readonly double ToPx(double parentValue, double defaultValue)
         {
             // Handle interpolation if active
             if (_lerpData != null)
@@ -157,7 +132,7 @@ namespace Prowl.PaperUI.LayoutEngine
         /// <param name="min">Minimum allowed value</param>
         /// <param name="max">Maximum allowed value</param>
         /// <returns>Size in pixels, clamped between min and max</returns>
-        public double ToPxClamped(double parentValue, double defaultValue, UnitValue min, UnitValue max)
+        public readonly double ToPxClamped(double parentValue, double defaultValue, in UnitValue min, in UnitValue max)
         {
             double minValue = min.ToPx(parentValue, double.MinValue);
             double maxValue = max.ToPx(parentValue, double.MaxValue);
@@ -174,7 +149,7 @@ namespace Prowl.PaperUI.LayoutEngine
         /// <param name="b">Ending value</param>
         /// <param name="blendFactor">Interpolation factor (0.0 to 1.0)</param>
         /// <returns>Interpolated UnitValue</returns>
-        public static UnitValue Lerp(UnitValue a, UnitValue b, double blendFactor)
+        public static UnitValue Lerp(in UnitValue a, in UnitValue b, double blendFactor)
         {
             // Ensure blend factor is between 0 and 1
             blendFactor = Math.Clamp(blendFactor, 0f, 1f);
@@ -203,11 +178,11 @@ namespace Prowl.PaperUI.LayoutEngine
         /// Creates a deep copy of this UnitValue.
         /// </summary>
         /// <returns>A new UnitValue with the same properties</returns>
-        public UnitValue Clone() => new UnitValue {
+        public readonly UnitValue Clone() => new UnitValue {
             Type = Type,
             Value = Value,
             PercentPixelOffset = PercentPixelOffset,
-            _lerpData = _lerpData?.Clone()
+            _lerpData = _lerpData != null ? new LerpData(_lerpData.Start, _lerpData.End, _lerpData.Progress) : null
         };
 
         #region Implicit Conversions
@@ -235,7 +210,7 @@ namespace Prowl.PaperUI.LayoutEngine
         /// <summary>
         /// Compares this UnitValue with another object for equality.
         /// </summary>
-        public override bool Equals(object? obj)
+        public override readonly bool Equals(object? obj)
         {
             if (obj is UnitValue other)
             {
@@ -264,14 +239,14 @@ namespace Prowl.PaperUI.LayoutEngine
         /// <summary>
         /// Returns a hash code for this UnitValue.
         /// </summary>
-        public override int GetHashCode() => HashCode.Combine(Type, Value, PercentPixelOffset);
+        public override readonly int GetHashCode() => HashCode.Combine(Type, Value, PercentPixelOffset);
 
         #endregion
 
         /// <summary>
         /// Returns a string representation of this UnitValue.
         /// </summary>
-        public override string ToString() => Type switch {
+        public override readonly string ToString() => Type switch {
             Units.Pixels => $"{Value}px",
             Units.Percentage => $"{Value}% + {PercentPixelOffset}px",
             Units.Stretch => $"Stretch({Value})",
