@@ -127,6 +127,10 @@ namespace Prowl.PaperUI.LayoutEngine
         /// <param name="parentValue">The parent element's size in pixels</param>
         /// <param name="defaultValue">Default value to use for Auto and Stretch units</param>
         /// <returns>Size in pixels</returns>
+        /// TODO the data is getting stored and read correctly. The issue is that the value for the pixels is not being set properly
+        /// I am not sure if this is because it's using stretch? Maybe this is the reason and that needs to be solved first.
+        /// I think going back to the branch where it is all working and tracing that code would be a good idea, because
+        /// I am completely lost on where to take this code.
         public double ToPx(double parentValue, double defaultValue)
         {
             // Handle interpolation if active
