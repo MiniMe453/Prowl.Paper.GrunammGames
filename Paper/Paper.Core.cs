@@ -245,8 +245,8 @@ namespace Prowl.PaperUI
             _canvas.TransformBy(styleTransform);
 
             // Draw box shadow before background
-            var rounded = (Vector4)data._elementStyle.GetValue(GuiProp.Rounded);
-            var boxShadow = (BoxShadow)data._elementStyle.GetValue(GuiProp.BoxShadow);
+            var rounded = (Vector4)data._elementStyle.GetValue<Vector4>(GuiProp.Rounded);
+            var boxShadow = (BoxShadow)data._elementStyle.GetValue<BoxShadow>(GuiProp.BoxShadow);
             if (boxShadow.IsVisible)
             {
                 double buffer = boxShadow.Blur * 0.5;
@@ -280,7 +280,7 @@ namespace Prowl.PaperUI
             }
 
             // Draw background (gradient overrides background color)
-            var gradient = (Gradient)data._elementStyle.GetValue(GuiProp.BackgroundGradient);
+            var gradient = (Gradient)data._elementStyle.GetValue<Gradient>(GuiProp.BackgroundGradient);
             if (gradient.Type != GradientType.None)
             {
                 switch (gradient.Type)
@@ -314,14 +314,14 @@ namespace Prowl.PaperUI
             }
             else
             {
-                var backgroundColor = (Color)data._elementStyle.GetValue(GuiProp.BackgroundColor);
+                var backgroundColor = (Color)data._elementStyle.GetValue<Color>(GuiProp.BackgroundColor);
                 if (backgroundColor.A > 0)
                     _canvas.RoundedRectFilled(rect.x, rect.y, rect.width, rect.height, rounded.x, rounded.y, rounded.z, rounded.w, backgroundColor);
             }
 
             // Draw border if needed
-            var borderColor = (Color)data._elementStyle.GetValue(GuiProp.BorderColor);
-            var borderWidth = (double)data._elementStyle.GetValue(GuiProp.BorderWidth);
+            var borderColor = (Color)data._elementStyle.GetValue<Color>(GuiProp.BorderColor);
+            var borderWidth = (double)data._elementStyle.GetValue<double>(GuiProp.BorderWidth);
             if (borderWidth > 0.0f && borderColor.A > 0)
             {
                 _canvas.BeginPath();
@@ -425,7 +425,7 @@ namespace Prowl.PaperUI
 
             Canvas canvas = handle.Owner?.Canvas ?? throw new InvalidOperationException("Owner paper or canvas is not set.");
 
-            var color = (Color)handle.Data._elementStyle.GetValue(GuiProp.TextColor);
+            var color = (Color)handle.Data._elementStyle.GetValue<Color>(GuiProp.TextColor);
 
             FontColor fs = new FontColor(color.R, color.G, color.B, color.A);
 

@@ -14,7 +14,7 @@ public class Button : Component<Button>
     public const string IS_WHITE_BUTTON_KEY = "IsWhiteButton";
     private void OnClickEvent(ClickEvent e)
     {
-        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_WHITE_BUTTON_KEY, !Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_WHITE_BUTTON_KEY));
+        Origami.Gui.SetElementStorage(ElementBuilder._handle, IS_WHITE_BUTTON_KEY, !Origami.Gui.GetElementStorage<bool>(ElementBuilder._handle, IS_WHITE_BUTTON_KEY));
         // IsWhiteButton = !IsWhiteButton;
     }
 
@@ -26,8 +26,8 @@ public class Button : Component<Button>
         ElementBuilder.BorderWidth(2).BorderColor(System.Drawing.Color.DarkGray).Margin(5)
             .OnClick(OnClickEvent);
 
-        if (!Origami.Gui.HasElementStorage(ElementBuilder._element, IS_WHITE_BUTTON_KEY))
-            Origami.Gui.SetElementStorage(ElementBuilder._element, IS_WHITE_BUTTON_KEY, false);
+        if (!Origami.Gui.HasElementStorage(ElementBuilder._handle, IS_WHITE_BUTTON_KEY))
+            Origami.Gui.SetElementStorage(ElementBuilder._handle, IS_WHITE_BUTTON_KEY, false);
         return this;
     }
 
@@ -78,8 +78,8 @@ public class Button : Component<Button>
 
     public Button Text(string text)
     {
-        ElementBuilder.Text(text)
-            .Alignment(TextAlignment.MiddleCenter);
+        // ElementBuilder.Text(text)
+        //     .Alignment(TextAlignment.MiddleCenter);
         return this;
     }
 

@@ -63,7 +63,7 @@ public static class StyleUtils
         { GuiProp.LetterSpacing, typeof(double) },
         { GuiProp.LineHeight, typeof(double) },
         { GuiProp.TabSize, typeof(int) },
-        { GuiProp.FontSize, typeof(float) }
+        { GuiProp.FontSize, typeof(double) }
     };
 
 public static T GetValueFromStruct<T>(GuiProp property, GuiProperties propsStruct)
@@ -136,8 +136,8 @@ public static T GetValueFromStruct<T>(GuiProp property, GuiProperties propsStruc
             case GuiProp.TabSize when typeof(T) == typeof(int):
                 return Unsafe.As<int, T>(ref propsStruct.TabSize);
 
-            case GuiProp.FontSize when typeof(T) == typeof(float):
-                return Unsafe.As<float, T>(ref propsStruct.FontSize);
+            case GuiProp.FontSize when typeof(T) == typeof(double):
+                return Unsafe.As<double, T>(ref propsStruct.FontSize);
 
             case GuiProp.Width when typeof(T) == typeof(UnitValue):
                 return Unsafe.As<UnitValue, T>(ref propsStruct.Width);
@@ -320,8 +320,8 @@ public static T GetValueFromStruct<T>(GuiProp property, GuiProperties propsStruc
                 propsStruct.TabSize = Unsafe.As<T, int>(ref value);
                 break;
 
-            case GuiProp.FontSize when typeof(T) == typeof(float):
-                propsStruct.FontSize = Unsafe.As<T, float>(ref value);
+            case GuiProp.FontSize when typeof(T) == typeof(double):
+                propsStruct.FontSize = Unsafe.As<T, double>(ref value);
                 break;
 
             case GuiProp.Width when typeof(T) == typeof(UnitValue):

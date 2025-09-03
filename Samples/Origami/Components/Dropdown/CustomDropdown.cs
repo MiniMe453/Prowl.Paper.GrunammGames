@@ -14,7 +14,7 @@ public class CustomDropdown : Dropdown
     {
         gui.Box("Hello world")
             .Height(200)
-            .Text("Hello world")
+            // .Text("Hello world")
             .BackgroundColor(Color.Brown);
     }
 }

@@ -43,13 +43,13 @@ namespace Prowl.PaperUI.LayoutEngine
         // Hierarchy
         public int ParentIndex;
         public List<int> ChildIndices;
-        
+
         // Interaction hooking - whether this element inherits parent's interaction state
         public bool IsHookedToParent;
-        
+
         // Interaction hooking - whether this element has hooked children (optimization flag)
         public bool IsAHookedParent;
-        
+
         // Tab navigation - element's position in tab order (-1 means not focusable via tab)
         public int TabIndex;
 
@@ -121,7 +121,7 @@ namespace Prowl.PaperUI.LayoutEngine
                 _quillMarkdown = null,
                 _textLayout = null,
                 _renderCommands = null,
-                _elementStyle = new ElementStyle(),
+                _elementStyle = new ElementStyle(), //TODO can probably delete this. Just need to fix everything first.
                 _scissorEnabled = false,
                 Layer = Layer.Base,
                 ProcessedText = false,

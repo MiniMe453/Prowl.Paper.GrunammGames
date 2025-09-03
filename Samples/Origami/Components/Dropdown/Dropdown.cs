@@ -27,7 +27,7 @@ public class Dropdown : Component<Dropdown>
 
     public override ElementBuilder DrawDefault()
     {
-        if (!Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, USE_SIMPLE_DROPDOWN))
+        if (!Origami.Gui.GetElementStorage<bool>(ElementBuilder._handle, USE_SIMPLE_DROPDOWN))
             throw new InvalidOperationException(
                 "In order to use DrawDefault(), you must use ActiveIndex() and SetValues()");
 
@@ -40,24 +40,24 @@ public class Dropdown : Component<Dropdown>
 
     private void ShowDropdown(ClickEvent e)
     {
-        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY,
-            !Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_OPENED_KEY));
+        Origami.Gui.SetElementStorage(ElementBuilder._handle, IS_OPENED_KEY,
+            !Origami.Gui.GetElementStorage<bool>(ElementBuilder._handle, IS_OPENED_KEY));
 
-        bool key = Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_OPENED_KEY);
+        bool key = Origami.Gui.GetElementStorage<bool>(ElementBuilder._handle, IS_OPENED_KEY);
     }
 
     private void CloseDropdown(ElementEvent e)
     {
-        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
+        Origami.Gui.SetElementStorage(ElementBuilder._handle, IS_OPENED_KEY, false);
     }
 
     protected override Dropdown OnCreated()
     {
         ElementBuilder.OnLeave(CloseDropdown);
-        if(!Origami.Gui.HasElementStorage(ElementBuilder._element, IS_OPENED_KEY))
+        if(!Origami.Gui.HasElementStorage(ElementBuilder._handle, IS_OPENED_KEY))
         {
-            Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
-            Origami.Gui.SetElementStorage(ElementBuilder._element, USE_SIMPLE_DROPDOWN, false);
+            Origami.Gui.SetElementStorage(ElementBuilder._handle, IS_OPENED_KEY, false);
+            Origami.Gui.SetElementStorage(ElementBuilder._handle, USE_SIMPLE_DROPDOWN, false);
         }
 
         return this;
@@ -78,7 +78,7 @@ public class Dropdown : Component<Dropdown>
                        .Enter())
             {
                 gui.Box("Preview Text")
-                    .Text(_displayValue)
+                    // .Text(_displayValue)
                     .Alignment(TextAlignment.MiddleLeft)
                     .Left(gui.Pixels(5));
 
@@ -92,7 +92,7 @@ public class Dropdown : Component<Dropdown>
                 .Top(gui.Percent(100, 1))
                 .Width(250)
                 .Height(UnitValue.Auto)
-                .Visible(Origami.Gui.GetElementStorage<bool>(ElementBuilder._element, IS_OPENED_KEY))
+                .Visible(Origami.Gui.GetElementStorage<bool>(ElementBuilder._handle, IS_OPENED_KEY))
                 .Layer(Layer.Topmost)
                 .Rounded(5)
                 .BoxShadow(0, 6, 16, -5, Color.FromArgb(128, Color.Black));
@@ -104,7 +104,7 @@ public class Dropdown : Component<Dropdown>
         _onItemSelected = onItemSelected;
         _values = values;
         _selectedIdx = idx;
-        Origami.Gui.SetElementStorage(ElementBuilder._element, USE_SIMPLE_DROPDOWN, true);
+        Origami.Gui.SetElementStorage(ElementBuilder._handle, USE_SIMPLE_DROPDOWN, true);
         return this;
     }
 
@@ -132,12 +132,12 @@ public class Dropdown : Component<Dropdown>
                 gui.Box("Dropdown Item", i)
                     .Width(250)
                     .Height(35)
-                    .Text(_values[i])
+                    // .Text(_values[i])
                     .Alignment(TextAlignment.MiddleCenter)
                     .OnClick(e =>
                     {
                         _onItemSelected.Invoke(idx);
-                        Origami.Gui.SetElementStorage(ElementBuilder._element, IS_OPENED_KEY, false);
+                        Origami.Gui.SetElementStorage(ElementBuilder._handle, IS_OPENED_KEY, false);
                     })
                     .BackgroundColor(tabColor)
                     .Rounded(i == 0 ? 5 : 0, i == 0 ? 5 : 0, i == _values.Count - 1 ? 5 : 0,

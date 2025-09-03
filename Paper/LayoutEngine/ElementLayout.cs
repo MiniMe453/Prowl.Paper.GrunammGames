@@ -13,8 +13,8 @@ namespace Prowl.PaperUI.LayoutEngine
         {
             ref var data = ref elementHandle.Data;
 
-            var wValue = (UnitValue)data._elementStyle.GetValue(GuiProp.Width);
-            var hValue = (UnitValue)data._elementStyle.GetValue(GuiProp.Height);
+            var wValue = (UnitValue)data._elementStyle.GetValue<UnitValue>(GuiProp.Width);
+            var hValue = (UnitValue)data._elementStyle.GetValue<UnitValue>(GuiProp.Height);
             double width = wValue.IsPixels ? wValue.Value : throw new Exception("Root element must have fixed width");
             double height = hValue.IsPixels ? hValue.Value : throw new Exception("Root element must have fixed height");
 
@@ -31,8 +31,8 @@ namespace Prowl.PaperUI.LayoutEngine
             return size;
         }
 
-        private static UnitValue GetProp(ref ElementData element, LayoutType parentType, GuiProp row, GuiProp column) 
-            => (UnitValue)element._elementStyle.GetValue(parentType == LayoutType.Row ? row : column);
+        private static UnitValue GetProp(ref ElementData element, LayoutType parentType, GuiProp row, GuiProp column)
+            => (UnitValue)element._elementStyle.GetValue<UnitValue>(parentType == LayoutType.Row ? row : column);
 
         private static UnitValue GetMain(ref ElementData element, LayoutType parentType) => GetProp(ref element, parentType, GuiProp.Width, GuiProp.Height);
         private static UnitValue GetCross(ref ElementData element, LayoutType parentType) => GetProp(ref element, parentType, GuiProp.Height, GuiProp.Width);
@@ -130,7 +130,7 @@ namespace Prowl.PaperUI.LayoutEngine
 
 
             // Apply aspect ratio if set
-            var aspectRatio = (double)element._elementStyle.GetValue(GuiProp.AspectRatio);
+            var aspectRatio = (double)element._elementStyle.GetValue<double>(GuiProp.AspectRatio);
             if (aspectRatio >= 0)
             {
                 aspectRatio = Math.Max(0.001, aspectRatio); // Prevent divide-by-zero
@@ -187,7 +187,7 @@ namespace Prowl.PaperUI.LayoutEngine
             // Pre-allocate and filter in single pass to avoid LINQ overhead
             var visibleChildren = new List<int>();
             var parentDirectedChildren = new List<int>();
-            
+
             foreach (int childIdx in element.ChildIndices)
             {
                 var childData = elementHandle.Owner.GetElementData(childIdx);
@@ -198,7 +198,7 @@ namespace Prowl.PaperUI.LayoutEngine
                         parentDirectedChildren.Add(childIdx);
                 }
             }
-            
+
             int numChildren = visibleChildren.Count;
             int numParentDirectedChildren = parentDirectedChildren.Count;
 
@@ -1288,11 +1288,11 @@ namespace Prowl.PaperUI.LayoutEngine
             {
                 var settings = TextLayoutSettings.Default;
 
-                settings.WordSpacing = Convert.ToSingle(element._elementStyle.GetValue(GuiProp.WordSpacing));
-                settings.LetterSpacing = Convert.ToSingle(element._elementStyle.GetValue(GuiProp.LetterSpacing));
-                settings.LineHeight = Convert.ToSingle(element._elementStyle.GetValue(GuiProp.LineHeight));
-                settings.TabSize = (int)element._elementStyle.GetValue(GuiProp.TabSize);
-                settings.PixelSize = Convert.ToSingle(element._elementStyle.GetValue(GuiProp.FontSize));
+                settings.WordSpacing = Convert.ToSingle(element._elementStyle.GetValue<double>(GuiProp.WordSpacing));
+                settings.LetterSpacing = Convert.ToSingle(element._elementStyle.GetValue<double>(GuiProp.LetterSpacing));
+                settings.LineHeight = Convert.ToSingle(element._elementStyle.GetValue<double>(GuiProp.LineHeight));
+                settings.TabSize = (int)element._elementStyle.GetValue<int>(GuiProp.TabSize);
+                settings.PixelSize = Convert.ToSingle(element._elementStyle.GetValue<double>(GuiProp.FontSize));
 
                 if(element.TextAlignment == TextAlignment.Left || element.TextAlignment == TextAlignment.MiddleLeft || element.TextAlignment == TextAlignment.BottomLeft)
                     settings.Alignment = Scribe.TextAlignment.Left;

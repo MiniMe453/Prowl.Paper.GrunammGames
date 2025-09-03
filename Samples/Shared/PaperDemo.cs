@@ -198,9 +198,6 @@ namespace Shared
                 Button.IconPrimary("UserProfile", "M")
                     .Margin(0, 15, 15, 0)
                     .OnClick((rect) => Console.WriteLine("Profile clicked"));
-
-                Gui.Box("ID Count").Text(UnitValue.NumLastFrame.ToString());
-                Gui.Box("ID Count").Text(Gui.stylesLastFrame.ToString());
             }
         }
 
@@ -1152,7 +1149,7 @@ namespace Shared
                 .Enter())
             {
                 Gui.Box("PoolCount").Margin(10)
-                    .Text(Origami.GetPoolSize<OrigamiUI.Button>().ToString())
+                    .Text(Origami.GetPoolSize<OrigamiUI.Button>().ToString(), Fonts.arial)
                     .Alignment(TextAlignment.MiddleCenter)
                     .Width(150)
                     .Height(50);
@@ -1191,7 +1188,7 @@ namespace Shared
                 {
                     Gui.Box("InputField")
                         .BackgroundColor(Color.DarkGray)
-                        .Text("Custom search bar here")
+                        .Text("Custom search bar here", Fonts.arial)
                         .Alignment(TextAlignment.MiddleLeft)
                         .Height(35)
                         .Margin(5)
@@ -1200,7 +1197,7 @@ namespace Shared
                     for (int i = 0; i < testValues.Length; i++)
                     {
                         Gui.Box("Item", i)
-                            .Text(testValues[i] + "HEHEHE")
+                            .Text(testValues[i] + "HEHEHE", Fonts.arial)
                             .Alignment(TextAlignment.MiddleCenter)
                             .Height(35);
                     }
@@ -1222,7 +1219,7 @@ namespace Shared
                                    .Enter())
                         {
                             Gui.Box("DemoText")
-                                .Text("Demo")
+                                .Text("Demo", Fonts.arial)
                                 .Alignment(TextAlignment.MiddleLeft)
                                 .TextColor(Color.White);
 
@@ -1239,7 +1236,7 @@ namespace Shared
                                    .Enter())
                         {
                             Gui.Box("DemoText")
-                                .Text("Proportional (P)")
+                                .Text("Proportional (P)", Fonts.arial)
                                 .Alignment(TextAlignment.MiddleLeft)
                                 .TextColor(Color.DodgerBlue);
 
@@ -1256,7 +1253,7 @@ namespace Shared
                                    .Enter())
                         {
                             Gui.Box("DemoText")
-                                .Text("Integral (I)")
+                                .Text("Integral (I)", Fonts.arial)
                                 .Alignment(TextAlignment.MiddleLeft)
                                 .TextColor(Color.SeaGreen);
 
@@ -1273,7 +1270,7 @@ namespace Shared
                                    .Enter())
                         {
                             Gui.Box("DemoText")
-                                .Text("Derivative (D)")
+                                .Text("Derivative (D)", Fonts.arial)
                                 .Alignment(TextAlignment.MiddleLeft)
                                 .TextColor(Color.IndianRed);
 
@@ -1290,7 +1287,7 @@ namespace Shared
                                    .Enter())
                         {
                             Gui.Box("DemoText")
-                                .Text("Force")
+                                .Text("Force", Fonts.arial)
                                 .Alignment(TextAlignment.MiddleLeft)
                                 .TextColor(Color.White);
 

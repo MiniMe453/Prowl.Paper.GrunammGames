@@ -38,7 +38,7 @@ public partial class Paper
 
     private void EndOfFramePoolCleanup()
     {
-        UnitValue.ResetCount();
+        // UnitValue.ResetCount();
         stylesLastFrame = _currentStyleIndex;
         _currentBuilderIndex = 0;
         _currentStyleIndex = 0;

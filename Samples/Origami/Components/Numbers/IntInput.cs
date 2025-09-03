@@ -56,7 +56,7 @@ public class IntInput : Component<IntInput>
             gui.Box("IntInput")
                 .BackgroundColor(Color.Black)
                 .OnDragging(OnInputFieldDragged)
-                .Text(_currValue.ToString())
+                // .Text(_currValue.ToString())
                 .Alignment(TextAlignment.MiddleCenter);
 
             using (gui.Column("IncrementingColumns")
