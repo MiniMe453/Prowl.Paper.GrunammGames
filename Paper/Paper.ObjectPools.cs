@@ -8,26 +8,24 @@ namespace Prowl.PaperUI;
 public partial class Paper
 {
     // private ObjectPool<ElementBuilder> _builderPool = new ObjectPool<ElementBuilder>();
-    private List<ElementBuilder> _builderPool = new(1024);
+    private List<ElementBuilder> _builderPool = new();
     private int _currentBuilderIndex = 0;
     public int _buildersLastFrame = 0;
 
     internal ElementBuilder GetBuilderFromPool(ElementHandle handle)
     {
-        ElementBuilder builder;
-
         _currentBuilderIndex++;
         if (_currentBuilderIndex >= _builderPool.Count)
         {
-            return new ElementBuilder(this, handle);
+            _builderPool.Add(new ElementBuilder(this, handle));
+            return _builderPool[_currentBuilderIndex - 1];
         }
         else
         {
             return _builderPool[_currentBuilderIndex].SetData(this, handle);
-            builder.SetData(this, handle);
         }
 
-        return builder;
+        return null;
     }
 
     // internal ElementStyle GetStyleFromPool(ulong id)
@@ -59,7 +57,7 @@ public partial class Paper
     {
         // UnitValue.ResetCount();
         stylesLastFrame = _currentStyleIndex;
-        _buildersLastFrame = _currentBuilderIndex;
+        _buildersLastFrame = _builderPool.Count;
         _currentBuilderIndex = 0;
         _currentStyleIndex = 0;
     }
