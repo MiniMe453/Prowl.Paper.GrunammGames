@@ -320,15 +320,16 @@ internal class ElementStyle
         public bool Update(double deltaTime, ref GuiProperties currentValue, List<GuiProp> completedInterpolations)
         {
             CurrentTime += deltaTime;
+            if (CurrentTime >= Duration)
+            {
+                StyleUtils.SetValueInStruct(Property, ref currentValue, TargetValue);
+                return true; // complete
+            }
+
             double t = Math.Min(1.0, CurrentTime / Duration);
             if (EasingFunction != null) t = EasingFunction(t);
 
             StyleUtils.SetValueInStruct(Property, ref currentValue, StyleUtils.Interpolate(StartValue, TargetValue, t));
-
-            if (CurrentTime >= Duration)
-            {
-                return true; // complete
-            }
             return false;
         }
     }
@@ -482,10 +483,11 @@ internal class ElementStyle
         // Track completed transitions for cleanup
         List<GuiProp> completedInterpolations = new();
 
-        _currentValues = _targetValues;
+        // _currentValues = _targetValues;
         // Process all properties that have target values
         foreach (GuiProp property in _targetValues)
         {
+            _currentValues.Add(property);
             Type targetType = StyleUtils.GuiPropTypes[property];
             switch (targetType)
             {

@@ -51,32 +51,32 @@ namespace Shared
                 //.Style(BoxStyle.Solid(backgroundColor))
                 .Enter())
             {
-                using (Gui.Column("Sidebar")
-                           .Style("sidebar")  // Automatic hover expansion with transitions
-                           .Margin(15)
-                           .Enter()){}
+                // using (Gui.Column("Sidebar")
+                //            .Style("sidebar")  // Automatic hover expansion with transitions
+                //            .Margin(15)
+                //            .Enter()){}
                 // // A stupid simple way to benchmark the performance of the UI (Adds the entire ui multiple times)
-                // for (int i = 0; i < 1; i++)
-                // {
-                //     Gui.PushID((ulong)i);
-                //     // Top navigation bar
-                //     RenderTopNavBar();
-                //
-                //     // Main content area
-                //     using (Gui.Row("ContentArea")
-                //         .Enter())
-                //     {
-                //         // Left sidebar
-                //         RenderSidebar();
-                //
-                //         // Content area (tabs content)
-                //         RenderMainContent();
-                //     }
-                //
-                //     // Footer
-                //     RenderFooter();
-                //     Gui.PopID();
-                // }
+                for (int i = 0; i < 1; i++)
+                {
+                    Gui.PushID((ulong)i);
+                    // Top navigation bar
+                    RenderTopNavBar();
+
+                    // Main content area
+                    using (Gui.Row("ContentArea")
+                        .Enter())
+                    {
+                        // Left sidebar
+                        RenderSidebar();
+
+                        // Content area (tabs content)
+                        RenderMainContent();
+                    }
+
+                    // Footer
+                    RenderFooter();
+                    Gui.PopID();
+                }
             }
 
 
