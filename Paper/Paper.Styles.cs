@@ -180,6 +180,21 @@ public class TransformBuilder
 
     #endregion
 
+    #region Public Methods
+    public void Reset()
+    {
+        _translateX = 0;
+        _translateY = 0;
+        _scaleX = 1;
+        _scaleY = 1;
+        _rotate = 0;
+        _skewX = 0;
+        _skewY = 0;
+        _originX = 0.5f;
+        _originY = 0.5f;
+    }
+    #endregion
+
     #region Builder Methods
 
     /// <summary>
@@ -355,6 +370,8 @@ internal class ElementStyle
     // Transition state
     private readonly Dictionary<GuiProp, TransitionConfig> _transitionConfigs = new();
     private readonly Dictionary<GuiProp, IInterpolationState> _interpolations = new();
+
+    private static TransformBuilder _transformBuilder = new();
 
     // private readonly Dictionary<GuiProp, InterpolationState> _interpolations = new();
 
@@ -572,60 +589,61 @@ internal class ElementStyle
     /// </summary>
     public Transform2D GetTransformForElement(Rect rect)
     {
-        TransformBuilder builder = new();
+        // TransformBuilder builder = new();
+        _transformBuilder.Reset();
 
         // Set transform properties from the current values
         if (HasValue(GuiProp.TranslateX))
         {
-            builder.SetTranslateX(StyleUtils.GetValueFromStruct<double>(GuiProp.TranslateX, _currentGuiValues));
+            _transformBuilder.SetTranslateX(StyleUtils.GetValueFromStruct<double>(GuiProp.TranslateX, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.TranslateY))
         {
-            builder.SetTranslateY(StyleUtils.GetValueFromStruct<double>(GuiProp.TranslateY, _currentGuiValues));
+            _transformBuilder.SetTranslateY(StyleUtils.GetValueFromStruct<double>(GuiProp.TranslateY, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.ScaleX))
         {
-            builder.SetScaleX(StyleUtils.GetValueFromStruct<double>(GuiProp.ScaleX, _currentGuiValues));
+            _transformBuilder.SetScaleX(StyleUtils.GetValueFromStruct<double>(GuiProp.ScaleX, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.ScaleY))
         {
-            builder.SetScaleY(StyleUtils.GetValueFromStruct<double>(GuiProp.ScaleY, _currentGuiValues));
+            _transformBuilder.SetScaleY(StyleUtils.GetValueFromStruct<double>(GuiProp.ScaleY, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.Rotate))
         {
-            builder.SetRotate(StyleUtils.GetValueFromStruct<double>(GuiProp.Rotate, _currentGuiValues));
+            _transformBuilder.SetRotate(StyleUtils.GetValueFromStruct<double>(GuiProp.Rotate, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.SkewX))
         {
-            builder.SetSkewX(StyleUtils.GetValueFromStruct<double>(GuiProp.SkewX, _currentGuiValues));
+            _transformBuilder.SetSkewX(StyleUtils.GetValueFromStruct<double>(GuiProp.SkewX, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.SkewY))
         {
-            builder.SetSkewY(StyleUtils.GetValueFromStruct<double>(GuiProp.SkewY, _currentGuiValues));
+            _transformBuilder.SetSkewY(StyleUtils.GetValueFromStruct<double>(GuiProp.SkewY, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.OriginX))
         {
-            builder.SetOriginX(StyleUtils.GetValueFromStruct<double>(GuiProp.OriginX, _currentGuiValues));
+            _transformBuilder.SetOriginX(StyleUtils.GetValueFromStruct<double>(GuiProp.OriginX, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.OriginY))
         {
-            builder.SetOriginY(StyleUtils.GetValueFromStruct<double>(GuiProp.OriginY, _currentGuiValues));
+            _transformBuilder.SetOriginY(StyleUtils.GetValueFromStruct<double>(GuiProp.OriginY, _currentGuiValues));
         }
 
         if (HasValue(GuiProp.Transform))
         {
-            builder.SetCustomTransform(StyleUtils.GetValueFromStruct<Transform2D>(GuiProp.Transform, _currentGuiValues));
+            _transformBuilder.SetCustomTransform(StyleUtils.GetValueFromStruct<Transform2D>(GuiProp.Transform, _currentGuiValues));
         }
 
-        return builder.Build(rect);
+        return _transformBuilder.Build(rect);
     }
 
     #endregion
