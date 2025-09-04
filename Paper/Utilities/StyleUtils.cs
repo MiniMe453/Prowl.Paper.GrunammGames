@@ -70,157 +70,157 @@ public static T GetValueFromStruct<T>(GuiProp property, GuiProperties propsStruc
     {
         switch (property)
         {
-            case GuiProp.BackgroundColor when typeof(T) == typeof(Color):
+            case GuiProp.BackgroundColor:
                 return Unsafe.As<Color, T>(ref propsStruct.BackgroundColor);
 
-            case GuiProp.BorderColor when typeof(T) == typeof(Color):
+            case GuiProp.BorderColor:
                 return Unsafe.As<Color, T>(ref propsStruct.BorderColor);
 
-            case GuiProp.TextColor when typeof(T) == typeof(Color):
+            case GuiProp.TextColor:
                 return Unsafe.As<Color, T>(ref propsStruct.TextColor);
 
-            case GuiProp.BackgroundGradient when typeof(T) == typeof(Gradient):
+            case GuiProp.BackgroundGradient:
                 return Unsafe.As<Gradient, T>(ref propsStruct.BackgroundGradient);
 
-            case GuiProp.BoxShadow when typeof(T) == typeof(BoxShadow):
+            case GuiProp.BoxShadow:
                 return Unsafe.As<BoxShadow, T>(ref propsStruct.BoxShadow);
 
-            case GuiProp.Transform when typeof(T) == typeof(Transform2D):
+            case GuiProp.Transform:
                 return Unsafe.As<Transform2D, T>(ref propsStruct.Transform);
 
-            case GuiProp.Rounded when typeof(T) == typeof(Vector4):
+            case GuiProp.Rounded:
                 return Unsafe.As<Vector4, T>(ref propsStruct.Rounded);
 
-            case GuiProp.BorderWidth when typeof(T) == typeof(double):
+            case GuiProp.BorderWidth:
                 return Unsafe.As<double, T>(ref propsStruct.BorderWidth);
 
-            case GuiProp.AspectRatio when typeof(T) == typeof(double):
+            case GuiProp.AspectRatio:
                 return Unsafe.As<double, T>(ref propsStruct.AspectRatio);
 
-            case GuiProp.TranslateX when typeof(T) == typeof(double):
+            case GuiProp.TranslateX:
                 return Unsafe.As<double, T>(ref propsStruct.TranslateX);
 
-            case GuiProp.TranslateY when typeof(T) == typeof(double):
+            case GuiProp.TranslateY:
                 return Unsafe.As<double, T>(ref propsStruct.TranslateY);
 
-            case GuiProp.ScaleX when typeof(T) == typeof(double):
+            case GuiProp.ScaleX:
                 return Unsafe.As<double, T>(ref propsStruct.ScaleX);
 
-            case GuiProp.ScaleY when typeof(T) == typeof(double):
+            case GuiProp.ScaleY:
                 return Unsafe.As<double, T>(ref propsStruct.ScaleY);
 
-            case GuiProp.Rotate when typeof(T) == typeof(double):
+            case GuiProp.Rotate:
                 return Unsafe.As<double, T>(ref propsStruct.Rotate);
 
-            case GuiProp.OriginX when typeof(T) == typeof(double):
+            case GuiProp.OriginX:
                 return Unsafe.As<double, T>(ref propsStruct.OriginX);
 
-            case GuiProp.OriginY when typeof(T) == typeof(double):
+            case GuiProp.OriginY:
                 return Unsafe.As<double, T>(ref propsStruct.OriginY);
 
-            case GuiProp.SkewX when typeof(T) == typeof(double):
+            case GuiProp.SkewX:
                 return Unsafe.As<double, T>(ref propsStruct.SkewX);
 
-            case GuiProp.SkewY when typeof(T) == typeof(double):
+            case GuiProp.SkewY:
                 return Unsafe.As<double, T>(ref propsStruct.SkewY);
 
-            case GuiProp.WordSpacing when typeof(T) == typeof(double):
+            case GuiProp.WordSpacing:
                 return Unsafe.As<double, T>(ref propsStruct.WordSpacing);
 
-            case GuiProp.LetterSpacing when typeof(T) == typeof(double):
+            case GuiProp.LetterSpacing:
                 return Unsafe.As<double, T>(ref propsStruct.LetterSpacing);
 
-            case GuiProp.LineHeight when typeof(T) == typeof(double):
+            case GuiProp.LineHeight:
                 return Unsafe.As<double, T>(ref propsStruct.LineHeight);
 
-            case GuiProp.TabSize when typeof(T) == typeof(int):
+            case GuiProp.TabSize:
                 return Unsafe.As<int, T>(ref propsStruct.TabSize);
 
-            case GuiProp.FontSize when typeof(T) == typeof(double):
+            case GuiProp.FontSize:
                 return Unsafe.As<double, T>(ref propsStruct.FontSize);
 
-            case GuiProp.Width when typeof(T) == typeof(UnitValue):
+            case GuiProp.Width:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.Width);
 
-            case GuiProp.Height when typeof(T) == typeof(UnitValue):
+            case GuiProp.Height:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.Height);
 
-            case GuiProp.MinWidth when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinWidth:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MinWidth);
 
-            case GuiProp.MaxWidth when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxWidth:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MaxWidth);
 
-            case GuiProp.MinHeight when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinHeight:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MinHeight);
 
-            case GuiProp.MaxHeight when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxHeight:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MaxHeight);
 
-            case GuiProp.Left when typeof(T) == typeof(UnitValue):
+            case GuiProp.Left:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.Left);
 
-            case GuiProp.Right when typeof(T) == typeof(UnitValue):
+            case GuiProp.Right:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.Right);
 
-            case GuiProp.Top when typeof(T) == typeof(UnitValue):
+            case GuiProp.Top:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.Top);
 
-            case GuiProp.Bottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.Bottom:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.Bottom);
 
-            case GuiProp.MinLeft when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinLeft:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MinLeft);
 
-            case GuiProp.MaxLeft when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxLeft:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MaxLeft);
 
-            case GuiProp.MinRight when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinRight:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MinRight);
 
-            case GuiProp.MaxRight when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxRight:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MaxRight);
 
-            case GuiProp.MinTop when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinTop:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MinTop);
 
-            case GuiProp.MaxTop when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxTop:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MaxTop);
 
-            case GuiProp.MinBottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinBottom:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MinBottom);
 
-            case GuiProp.MaxBottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxBottom:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.MaxBottom);
 
-            case GuiProp.ChildLeft when typeof(T) == typeof(UnitValue):
+            case GuiProp.ChildLeft:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.ChildLeft);
 
-            case GuiProp.ChildRight when typeof(T) == typeof(UnitValue):
+            case GuiProp.ChildRight:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.ChildRight);
 
-            case GuiProp.ChildTop when typeof(T) == typeof(UnitValue):
+            case GuiProp.ChildTop:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.ChildTop);
 
-            case GuiProp.ChildBottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.ChildBottom:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.ChildBottom);
 
-            case GuiProp.RowBetween when typeof(T) == typeof(UnitValue):
+            case GuiProp.RowBetween:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.RowBetween);
 
-            case GuiProp.ColBetween when typeof(T) == typeof(UnitValue):
+            case GuiProp.ColBetween:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.ColBetween);
 
-            case GuiProp.BorderLeft when typeof(T) == typeof(UnitValue):
+            case GuiProp.BorderLeft:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.BorderLeft);
 
-            case GuiProp.BorderRight when typeof(T) == typeof(UnitValue):
+            case GuiProp.BorderRight:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.BorderRight);
 
-            case GuiProp.BorderTop when typeof(T) == typeof(UnitValue):
+            case GuiProp.BorderTop:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.BorderTop);
 
-            case GuiProp.BorderBottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.BorderBottom:
                 return Unsafe.As<UnitValue, T>(ref propsStruct.BorderBottom);
 
             default:
@@ -232,207 +232,207 @@ public static T GetValueFromStruct<T>(GuiProp property, GuiProperties propsStruc
     {
         switch (property)
         {
-            case GuiProp.BackgroundColor when typeof(T) == typeof(Color):
+            case GuiProp.BackgroundColor:
                 propsStruct.BackgroundColor = Unsafe.As<T, Color>(ref value);
                 break;
 
-            case GuiProp.BorderColor when typeof(T) == typeof(Color):
+            case GuiProp.BorderColor:
                 propsStruct.BorderColor = Unsafe.As<T, Color>(ref value);
                 break;
 
-            case GuiProp.TextColor when typeof(T) == typeof(Color):
+            case GuiProp.TextColor:
                 propsStruct.TextColor = Unsafe.As<T, Color>(ref value);
                 break;
 
-            case GuiProp.BackgroundGradient when typeof(T) == typeof(Gradient):
+            case GuiProp.BackgroundGradient:
                 propsStruct.BackgroundGradient = Unsafe.As<T, Gradient>(ref value);
                 break;
 
-            case GuiProp.BoxShadow when typeof(T) == typeof(BoxShadow):
+            case GuiProp.BoxShadow:
                 propsStruct.BoxShadow = Unsafe.As<T, BoxShadow>(ref value);
                 break;
 
-            case GuiProp.Transform when typeof(T) == typeof(Transform2D):
+            case GuiProp.Transform:
                 propsStruct.Transform = Unsafe.As<T, Transform2D>(ref value);
                 break;
 
-            case GuiProp.Rounded when typeof(T) == typeof(Vector4):
+            case GuiProp.Rounded:
                 propsStruct.Rounded = Unsafe.As<T, Vector4>(ref value);
                 break;
 
-            case GuiProp.BorderWidth when typeof(T) == typeof(double):
+            case GuiProp.BorderWidth:
                 propsStruct.BorderWidth = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.AspectRatio when typeof(T) == typeof(double):
+            case GuiProp.AspectRatio:
                 propsStruct.AspectRatio = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.TranslateX when typeof(T) == typeof(double):
+            case GuiProp.TranslateX:
                 propsStruct.TranslateX = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.TranslateY when typeof(T) == typeof(double):
+            case GuiProp.TranslateY:
                 propsStruct.TranslateY = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.ScaleX when typeof(T) == typeof(double):
+            case GuiProp.ScaleX:
                 propsStruct.ScaleX = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.ScaleY when typeof(T) == typeof(double):
+            case GuiProp.ScaleY:
                 propsStruct.ScaleY = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.Rotate when typeof(T) == typeof(double):
+            case GuiProp.Rotate:
                 propsStruct.Rotate = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.OriginX when typeof(T) == typeof(double):
+            case GuiProp.OriginX:
                 propsStruct.OriginX = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.OriginY when typeof(T) == typeof(double):
+            case GuiProp.OriginY:
                 propsStruct.OriginY = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.SkewX when typeof(T) == typeof(double):
+            case GuiProp.SkewX:
                 propsStruct.SkewX = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.SkewY when typeof(T) == typeof(double):
+            case GuiProp.SkewY:
                 propsStruct.SkewY = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.WordSpacing when typeof(T) == typeof(double):
+            case GuiProp.WordSpacing:
                 propsStruct.WordSpacing = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.LetterSpacing when typeof(T) == typeof(double):
+            case GuiProp.LetterSpacing:
                 propsStruct.LetterSpacing = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.LineHeight when typeof(T) == typeof(double):
+            case GuiProp.LineHeight:
                 propsStruct.LineHeight = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.TabSize when typeof(T) == typeof(int):
+            case GuiProp.TabSize:
                 propsStruct.TabSize = Unsafe.As<T, int>(ref value);
                 break;
 
-            case GuiProp.FontSize when typeof(T) == typeof(double):
+            case GuiProp.FontSize:
                 propsStruct.FontSize = Unsafe.As<T, double>(ref value);
                 break;
 
-            case GuiProp.Width when typeof(T) == typeof(UnitValue):
+            case GuiProp.Width:
                 propsStruct.Width = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.Height when typeof(T) == typeof(UnitValue):
+            case GuiProp.Height:
                 propsStruct.Height = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MinWidth when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinWidth:
                 propsStruct.MinWidth = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MaxWidth when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxWidth:
                 propsStruct.MaxWidth = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MinHeight when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinHeight:
                 propsStruct.MinHeight = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MaxHeight when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxHeight:
                 propsStruct.MaxHeight = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.Left when typeof(T) == typeof(UnitValue):
+            case GuiProp.Left:
                 propsStruct.Left = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.Right when typeof(T) == typeof(UnitValue):
+            case GuiProp.Right:
                 propsStruct.Right = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.Top when typeof(T) == typeof(UnitValue):
+            case GuiProp.Top:
                 propsStruct.Top = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.Bottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.Bottom:
                 propsStruct.Bottom = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MinLeft when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinLeft:
                 propsStruct.MinLeft = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MaxLeft when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxLeft:
                 propsStruct.MaxLeft = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MinRight when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinRight:
                 propsStruct.MinRight = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MaxRight when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxRight:
                 propsStruct.MaxRight = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MinTop when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinTop:
                 propsStruct.MinTop = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MaxTop when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxTop:
                 propsStruct.MaxTop = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MinBottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.MinBottom:
                 propsStruct.MinBottom = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.MaxBottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.MaxBottom:
                 propsStruct.MaxBottom = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.ChildLeft when typeof(T) == typeof(UnitValue):
+            case GuiProp.ChildLeft:
                 propsStruct.ChildLeft = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.ChildRight when typeof(T) == typeof(UnitValue):
+            case GuiProp.ChildRight:
                 propsStruct.ChildRight = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.ChildTop when typeof(T) == typeof(UnitValue):
+            case GuiProp.ChildTop:
                 propsStruct.ChildTop = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.ChildBottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.ChildBottom:
                 propsStruct.ChildBottom = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.RowBetween when typeof(T) == typeof(UnitValue):
+            case GuiProp.RowBetween:
                 propsStruct.RowBetween = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.ColBetween when typeof(T) == typeof(UnitValue):
+            case GuiProp.ColBetween:
                 propsStruct.ColBetween = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.BorderLeft when typeof(T) == typeof(UnitValue):
+            case GuiProp.BorderLeft:
                 propsStruct.BorderLeft = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.BorderRight when typeof(T) == typeof(UnitValue):
+            case GuiProp.BorderRight:
                 propsStruct.BorderRight = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.BorderTop when typeof(T) == typeof(UnitValue):
+            case GuiProp.BorderTop:
                 propsStruct.BorderTop = Unsafe.As<T, UnitValue>(ref value);
                 break;
 
-            case GuiProp.BorderBottom when typeof(T) == typeof(UnitValue):
+            case GuiProp.BorderBottom:
                 propsStruct.BorderBottom = Unsafe.As<T, UnitValue>(ref value);
                 break;
 

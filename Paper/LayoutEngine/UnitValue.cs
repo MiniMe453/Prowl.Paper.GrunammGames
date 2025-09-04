@@ -15,7 +15,7 @@ namespace Prowl.PaperUI.LayoutEngine
         private class LerpData
         {
             public readonly UnitValue Start;
-            public readonly UnitValue End; 
+            public readonly UnitValue End;
             public readonly double Progress;
 
             public LerpData(UnitValue start, UnitValue end, double progress)
