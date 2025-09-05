@@ -484,39 +484,39 @@ namespace Prowl.PaperUI
                 switch (targetType)
                 {
                     case Type t when t == typeof(Color):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<Color>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<Color>(property, ref _guiProperties));
                         break;
 
                     case Type t when t == typeof(Gradient):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<Gradient>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<Gradient>(property, ref _guiProperties));
                         break;
 
                     case Type t when t == typeof(double):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<double>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<double>(property, ref _guiProperties));
                         break;
 
                     case Type t when t == typeof(Vector4):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<Vector4>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<Vector4>(property, ref _guiProperties));
                         break;
 
                     case Type t when t == typeof(BoxShadow):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<BoxShadow>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<BoxShadow>(property, ref _guiProperties));
                         break;
 
                     case Type t when t == typeof(UnitValue):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<UnitValue>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<UnitValue>(property, ref _guiProperties));
                         break;
 
                     case Type t when t == typeof(int):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<int>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<int>(property, ref _guiProperties));
                         break;
 
                     case Type t when t == typeof(float):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<float>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<float>(property, ref _guiProperties));
                         break;
 
                     case Type t when t == typeof(Transform2D):
-                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<Transform2D>(property, _guiProperties));
+                        element.Owner!.SetStyleProperty(element.Data.ID, property, StyleUtils.GetValueFromStruct<Transform2D>(property, ref _guiProperties));
                         break;
 
                     default:

@@ -66,7 +66,7 @@ public static class StyleUtils
         { GuiProp.FontSize, typeof(double) }
     };
 
-public static T GetValueFromStruct<T>(GuiProp property, GuiProperties propsStruct)
+public static T GetValueFromStruct<T>(GuiProp property, ref GuiProperties propsStruct)
     {
         switch (property)
         {

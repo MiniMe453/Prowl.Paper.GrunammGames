@@ -312,7 +312,7 @@ internal class ElementStyle
     private interface IInterpolationState
     {
         GuiProp Property { get; }
-        bool Update(double deltaTime, ref GuiProperties currentValue, List<GuiProp> completedInterpolations);
+        bool Update(double deltaTime, ref GuiProperties currentValue);
     }
 
     /// <summary>
@@ -332,7 +332,7 @@ internal class ElementStyle
         public Func<double, double>? EasingFunction { get; set; }
         public double CurrentTime { get; set; }
 
-        public bool Update(double deltaTime, ref GuiProperties currentValue, List<GuiProp> completedInterpolations)
+        public bool Update(double deltaTime, ref GuiProperties currentValue)
         {
             CurrentTime += deltaTime;
             if (CurrentTime >= Duration)
@@ -353,7 +353,7 @@ internal class ElementStyle
 
     #region Fields
 
-    private static readonly GuiProperties _defaultValues = new();
+    private static GuiProperties _defaultValues = new();
     private GuiProperties _currentGuiValues = new();
     public GuiProperties Properties => _currentGuiValues;
     private GuiProperties _targetGuiValues = new();
@@ -390,6 +390,7 @@ internal class ElementStyle
         //TODO understand how this works better
         _targetValues.Clear();
         _currentValues.Clear();
+        _transitionConfigs.Clear();
 
         _currentGuiValues.SetDefaultValues();
         _targetGuiValues.SetDefaultValues();
@@ -424,7 +425,7 @@ internal class ElementStyle
         // If we have the value, return it
         if (HasValue(property))
         {
-            return StyleUtils.GetValueFromStruct<T>(property, _currentGuiValues);
+            return StyleUtils.GetValueFromStruct<T>(property, ref _currentGuiValues);
         }
 
         // Otherwise check parent
@@ -434,7 +435,7 @@ internal class ElementStyle
         }
 
         // Otherwise return default
-        return StyleUtils.GetValueFromStruct<T>(property, _defaultValues);
+        return StyleUtils.GetValueFromStruct<T>(property, ref _defaultValues);
     }
 
     /// <summary>
@@ -469,7 +470,17 @@ internal class ElementStyle
     public void SetTransitionConfig(GuiProp property, double duration, Func<double, double>? easing = null)
     {
         // Store the transition configuration for this property
-        _transitionConfigs[property] = new TransitionConfig { Duration = duration, EasingFunction = easing };
+
+        if (_transitionConfigs.TryGetValue(property, out TransitionConfig config))
+        {
+            config.Duration = duration;
+            config.EasingFunction = easing;
+            _transitionConfigs[property] = config;
+        }
+        else
+        {
+            _transitionConfigs[property] = new TransitionConfig { Duration = duration, EasingFunction = easing };
+        }
 
         // Mark this property as having a transition
         _propertiesWithTransitions.Add(property);
@@ -491,82 +502,65 @@ internal class ElementStyle
     /// </summary>
     public void Update(double deltaTime)
     {
-        if (!_firstFrame)
-        {
-            // Initialize values for properties with transitions
-            InitializeTransitionProperties();
-        }
-
-        // Track completed transitions for cleanup
-        List<GuiProp> completedInterpolations = new();
-
-        // _currentValues = _targetValues;
         // Process all properties that have target values
         foreach (GuiProp property in _targetValues)
         {
-            Type targetType = StyleUtils.GuiPropTypes[property];
-            switch (targetType)
+            switch (StyleUtils.GuiPropTypes[property])
             {
                 case Type t when t == typeof(Color):
-                    ProcessPropertyForAnimation<Color>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<Color>(property, deltaTime);
                     break;
 
                 case Type t when t == typeof(Gradient):
-                    ProcessPropertyForAnimation<Gradient>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<Gradient>(property, deltaTime);
                     break;
 
                 case Type t when t == typeof(double):
-                    ProcessPropertyForAnimation<double>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<double>(property, deltaTime);
                     break;
 
                 case Type t when t == typeof(Vector4):
-                    ProcessPropertyForAnimation<Vector4>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<Vector4>(property, deltaTime);
                     break;
 
                 case Type t when t == typeof(BoxShadow):
-                    ProcessPropertyForAnimation<BoxShadow>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<BoxShadow>(property, deltaTime);
                     break;
 
                 case Type t when t == typeof(UnitValue):
-                    ProcessPropertyForAnimation<UnitValue>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<UnitValue>(property, deltaTime);
                     break;
 
                 case Type t when t == typeof(int):
-                    ProcessPropertyForAnimation<int>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<int>(property, deltaTime);
                     break;
 
                 case Type t when t == typeof(float):
-                    ProcessPropertyForAnimation<float>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<float>(property, deltaTime);
                     break;
 
                 case Type t when t == typeof(Transform2D):
-                    ProcessPropertyForAnimation<Transform2D>(property, deltaTime, completedInterpolations);
+                    ProcessPropertyForAnimation<Transform2D>(property, deltaTime);
                     break;
 
                 default:
-                    throw new InvalidOperationException($"Unsupported type {targetType} for property {property}.");
+                    throw new InvalidOperationException($"Unsupported type {StyleUtils.GuiPropTypes[property]} for property {property}.");
             }
 
             _currentValues.Add(property);
         }
 
-        // Clean up completed interpolations
-        foreach (GuiProp property in completedInterpolations)
-        {
-            RemoveInterpolation(property);
-        }
-
-        // Clear transition configs after processing - they don't persist across frames
-        _transitionConfigs.Clear();
+        // // Clear transition configs after processing - they don't persist across frames
+        // _transitionConfigs.Clear();
     }
 
     private void RemoveInterpolation(GuiProp property)
     {
+        _transitionConfigs.Remove(property);
         _interpolations.Remove(property);
     }
 
-    private void ProcessPropertyForAnimation<T>(GuiProp property, double deltaTime,
-        List<GuiProp> completedInterpolations)
+    private void ProcessPropertyForAnimation<T>(GuiProp property, double deltaTime)
     {
         // Get the target value based on what was set this frame or inherited
         T targetValue = GetTargetValue<T>(property);
@@ -574,7 +568,7 @@ internal class ElementStyle
         // If the property has a transition config, set up an interpolation
         if (_transitionConfigs.TryGetValue(property, out TransitionConfig? config))
         {
-            ProcessPropertyWithTransition(property, targetValue, config, deltaTime, completedInterpolations);
+            ProcessPropertyWithTransition(property, targetValue, config, deltaTime);
         }
         else
         {
@@ -595,52 +589,52 @@ internal class ElementStyle
         // Set transform properties from the current values
         if (HasValue(GuiProp.TranslateX))
         {
-            _transformBuilder.SetTranslateX(StyleUtils.GetValueFromStruct<double>(GuiProp.TranslateX, _currentGuiValues));
+            _transformBuilder.SetTranslateX(StyleUtils.GetValueFromStruct<double>(GuiProp.TranslateX, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.TranslateY))
         {
-            _transformBuilder.SetTranslateY(StyleUtils.GetValueFromStruct<double>(GuiProp.TranslateY, _currentGuiValues));
+            _transformBuilder.SetTranslateY(StyleUtils.GetValueFromStruct<double>(GuiProp.TranslateY, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.ScaleX))
         {
-            _transformBuilder.SetScaleX(StyleUtils.GetValueFromStruct<double>(GuiProp.ScaleX, _currentGuiValues));
+            _transformBuilder.SetScaleX(StyleUtils.GetValueFromStruct<double>(GuiProp.ScaleX, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.ScaleY))
         {
-            _transformBuilder.SetScaleY(StyleUtils.GetValueFromStruct<double>(GuiProp.ScaleY, _currentGuiValues));
+            _transformBuilder.SetScaleY(StyleUtils.GetValueFromStruct<double>(GuiProp.ScaleY, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.Rotate))
         {
-            _transformBuilder.SetRotate(StyleUtils.GetValueFromStruct<double>(GuiProp.Rotate, _currentGuiValues));
+            _transformBuilder.SetRotate(StyleUtils.GetValueFromStruct<double>(GuiProp.Rotate, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.SkewX))
         {
-            _transformBuilder.SetSkewX(StyleUtils.GetValueFromStruct<double>(GuiProp.SkewX, _currentGuiValues));
+            _transformBuilder.SetSkewX(StyleUtils.GetValueFromStruct<double>(GuiProp.SkewX, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.SkewY))
         {
-            _transformBuilder.SetSkewY(StyleUtils.GetValueFromStruct<double>(GuiProp.SkewY, _currentGuiValues));
+            _transformBuilder.SetSkewY(StyleUtils.GetValueFromStruct<double>(GuiProp.SkewY, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.OriginX))
         {
-            _transformBuilder.SetOriginX(StyleUtils.GetValueFromStruct<double>(GuiProp.OriginX, _currentGuiValues));
+            _transformBuilder.SetOriginX(StyleUtils.GetValueFromStruct<double>(GuiProp.OriginX, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.OriginY))
         {
-            _transformBuilder.SetOriginY(StyleUtils.GetValueFromStruct<double>(GuiProp.OriginY, _currentGuiValues));
+            _transformBuilder.SetOriginY(StyleUtils.GetValueFromStruct<double>(GuiProp.OriginY, ref _currentGuiValues));
         }
 
         if (HasValue(GuiProp.Transform))
         {
-            _transformBuilder.SetCustomTransform(StyleUtils.GetValueFromStruct<Transform2D>(GuiProp.Transform, _currentGuiValues));
+            _transformBuilder.SetCustomTransform(StyleUtils.GetValueFromStruct<Transform2D>(GuiProp.Transform, ref _currentGuiValues));
         }
 
         return _transformBuilder.Build(rect);
@@ -651,84 +645,13 @@ internal class ElementStyle
     #region Private Helper Methods
 
     /// <summary>
-    ///     Initializes values for properties with transitions.
-    /// </summary>
-    private void InitializeTransitionProperties()
-    {
-        foreach (GuiProp property in _propertiesWithTransitions)
-        {
-            // If we don't have a current value yet for a property with transition,
-            // initialize it with the default or parent value
-            if (HasValue(property))
-            {
-                continue;
-            }
-
-            Type targetType = StyleUtils.GuiPropTypes[property];
-            switch (targetType)
-            {
-                case Type t when t == typeof(Color):
-                    InitializeTransitionProperty<Color>(property);
-                    break;
-
-                case Type t when t == typeof(Gradient):
-                    InitializeTransitionProperty<Gradient>(property);
-                    break;
-
-                case Type t when t == typeof(double):
-                    InitializeTransitionProperty<double>(property);
-                    break;
-
-                case Type t when t == typeof(Vector4):
-                    InitializeTransitionProperty<Vector4>(property);
-                    break;
-
-                case Type t when t == typeof(BoxShadow):
-                    InitializeTransitionProperty<BoxShadow>(property);
-                    break;
-
-                case Type t when t == typeof(UnitValue):
-                    InitializeTransitionProperty<UnitValue>(property);
-                    break;
-
-                case Type t when t == typeof(int):
-                    InitializeTransitionProperty<int>(property);
-                    break;
-
-                case Type t when t == typeof(float):
-                    InitializeTransitionProperty<float>(property);
-                    break;
-
-                case Type t when t == typeof(Transform2D):
-                    InitializeTransitionProperty<Transform2D>(property);
-                    break;
-
-                default:
-                    throw new InvalidOperationException($"Unsupported type {targetType} for property {property}.");
-            }
-        }
-    }
-
-    private void InitializeTransitionProperty<T>(GuiProp property)
-    {
-        if (_parent != null && _parent.HasValue(property))
-        {
-            StyleUtils.SetValueInStruct(property, ref _currentGuiValues, _parent.GetValue<T>(property));
-        }
-        else
-        {
-            StyleUtils.SetValueInStruct(property, ref _currentGuiValues, GetDefaultValue<T>(property));
-        }
-    }
-
-    /// <summary>
     ///     Gets the target value for a property based on explicit setting or inheritance.
     /// </summary>
     private T GetTargetValue<T>(GuiProp property)
     {
         if (_propertiesSetThisFrame.Contains(property)) // If property was set this frame, use the explicit value
         {
-            return StyleUtils.GetValueFromStruct<T>(property, _targetGuiValues);
+            return StyleUtils.GetValueFromStruct<T>(property, ref _targetGuiValues);
         }
 
         if (_parent != null && _parent.HasValue(property)) // If not set, but has parent, use parent value
@@ -742,14 +665,14 @@ internal class ElementStyle
 
     private T GetDefaultValue<T>(GuiProp property)
     {
-        return StyleUtils.GetValueFromStruct<T>(property, _defaultValues);
+        return StyleUtils.GetValueFromStruct<T>(property, ref _defaultValues);
     }
 
     /// <summary>
     ///     Processes transitions for a property.
     /// </summary>
     private void ProcessPropertyWithTransition<T>(GuiProp property, T targetValue, TransitionConfig config,
-        double deltaTime, List<GuiProp> completedInterpolations)
+        double deltaTime)
     {
         // If we don't have a current value yet, initialize it immediately
         T currentValue;
@@ -758,21 +681,20 @@ internal class ElementStyle
         {
             currentValue = targetValue;
             StyleUtils.SetValueInStruct(property, ref _currentGuiValues, currentValue);
-            // _currentValues[property] = currentValue;
             return;
         }
 
-        currentValue = StyleUtils.GetValueFromStruct<T>(property, _currentGuiValues);
+        currentValue = StyleUtils.GetValueFromStruct<T>(property, ref _currentGuiValues);
         // Skip if the values are already equal
         if (currentValue.Equals(targetValue))
         {
             return;
         }
 
-        HandleInterpolationState(property, currentValue, targetValue, config, deltaTime, completedInterpolations);
+        HandleInterpolationState(property, currentValue, targetValue, config, deltaTime);
     }
 
-    private void HandleInterpolationState<T>(GuiProp property, T currentValue, T targetValue, TransitionConfig config, double deltaTime, List<GuiProp> completedInterpolations)
+    private void HandleInterpolationState<T>(GuiProp property, T currentValue, T targetValue, TransitionConfig config, double deltaTime)
     {
         // Create or update interpolation state
         if (!_interpolations.TryGetValue(property, out IInterpolationState? state))
@@ -804,9 +726,13 @@ internal class ElementStyle
         // Update the interpolation
         stateConverted.CurrentTime += deltaTime;
 
-        bool isFinished = stateConverted.Update(deltaTime, ref _currentGuiValues, completedInterpolations);
+        bool isFinished = stateConverted.Update(deltaTime, ref _currentGuiValues);
 
-        if (isFinished) completedInterpolations.Add(property);
+        if (isFinished)
+        {
+            RemoveInterpolation(property);
+            // completedInterpolations.Add(property);
+        }
     }
     #endregion
 }
@@ -901,7 +827,7 @@ public partial class Paper
         if (!_activeStyles.TryGetValue(elementID, out ElementStyle? style))
         {
             // Create a new style if it doesn't exist
-            style = new ElementStyle();
+            style = GetStyleFromPool();
             _activeStyles[elementID] = style;
             // _createdElements[elementID]._elementStyle = style;
         }
@@ -998,23 +924,30 @@ public partial class Paper
             baseStyle.ApplyTo(element);
         }
 
-        // Apply pseudo-states in order
-        (string, bool)[] pseudoStates = new[]
+        if (IsElementHovered(element.Data.ID))
         {
-            ("hovered", IsElementHovered(element.Data.ID)),
-            ("focused", IsElementFocused(element.Data.ID)),
-            ("active", IsElementActive(element.Data.ID))
-        };
-
-        foreach ((string state, bool isActive) in pseudoStates)
-        {
-            if (isActive)
+            string pseudoStyleName = $"{baseName}:hovered";
+            if (TryGetStyle(pseudoStyleName, out StyleTemplate? pseudoStyle))
             {
-                string pseudoStyleName = $"{baseName}:{state}";
-                if (TryGetStyle(pseudoStyleName, out StyleTemplate? pseudoStyle))
-                {
-                    pseudoStyle.ApplyTo(element);
-                }
+                pseudoStyle.ApplyTo(element);
+            }
+        }
+
+        if (IsElementFocused(element.Data.ID))
+        {
+            string pseudoStyleName = $"{baseName}:focused";
+            if (TryGetStyle(pseudoStyleName, out StyleTemplate? pseudoStyle))
+            {
+                pseudoStyle.ApplyTo(element);
+            }
+        }
+
+        if (IsElementActive(element.Data.ID))
+        {
+            string pseudoStyleName = $"{baseName}:active";
+            if (TryGetStyle(pseudoStyleName, out StyleTemplate? pseudoStyle))
+            {
+                pseudoStyle.ApplyTo(element);
             }
         }
     }
